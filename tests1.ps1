@@ -5,8 +5,8 @@ $items | Copy-Item -Destination D:\trond.hindenes\Documents\Scripts\Powershell\M
 
 if (Get-Module AzureDeploymentEngineJson){Remove-Module AzureDeploymentEngineJson}
 
-ipmo "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psd1"
-
+#ipmo "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psd1"
+ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psm1
 
 #Update-Module azuredeploymentenginejson
 
@@ -15,7 +15,7 @@ $subscription = new-AzdeSubscription -AzureSubscription (Get-AzureSubscription -
 $deployment | Add-AzdeSubscription -Subscription $subscription
 
 $depvmsettings = new-object AzureDeploymentEngine.VmSetting
-$depvmsettings.VmImage = "WIndows Server 2012R2"
+$depvmsettings.VmImage = "Windows Server 2012 R2 Datacenter"
 
 $deployment.VmSettings = $depvmsettings
 
@@ -41,7 +41,7 @@ $project.ProjectSettings = $projectsettings
 
 
 
-$vmsettings1 = New-AzdeVmSettings -AlwaysRedeploy $false -vmimage "Windows Server 2012R2"
+$vmsettings1 = New-AzdeVmSettings -AlwaysRedeploy $false -vmimage "Windows Server 2012 R2 Datacenter"
 $vmsettings2 = New-AzdeVmSettings -AlwaysRedeploy $true
 
 
@@ -51,10 +51,10 @@ $deployment.VmSettings = $vmsettings1
 $project.VmSettings = $vmsettings2
 
 $cloudservicesettings = New-Object AzureDeploymentEngine.CloudServiceSetting
-$cloudservicesettings.CloudServicePrefix = "cs-"
-$cloudservicesettings.CloudServiceSuffix = "-svc"
+$cloudservicesettings.CloudServiceName = "trond-cs"
 
 $deployment.CloudServiceSettings = $cloudservicesettings
+$deployment.VmSettings = $vmsettings1
 
 $network = New-Object AzureDeploymentEngine.network
 $network.NetworkName = "VNET1"

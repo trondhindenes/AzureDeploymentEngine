@@ -5,7 +5,7 @@
     )
 
     $deployment = New-Object AzureDeploymentEngine.Deployment
-    $Deployment.DeploymentFriendlyName = $DeploymentName
+    $Deployment.DeploymentName = $DeploymentName
     $deployment
 }
 

@@ -12,8 +12,15 @@ Workflow Invoke-AzDeVirtualMachine
 
     if (!($vms))
     {
+      
+
         $vms = @()
         $vms += $vm
+    }
+
+    if ((!$vm) -and (!$vms))
+    {
+        throw "No VMs Specified"
     }
 
     #at this point, we have an array of vms
