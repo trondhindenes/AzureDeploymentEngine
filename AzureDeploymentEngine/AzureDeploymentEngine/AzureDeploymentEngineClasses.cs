@@ -32,11 +32,13 @@ namespace AzureDeploymentEngine
         public AzureDeploymentEngine.Credential DomainJoinCredential { get; set; }
         public int VmCount { get; set; }
         public string CloudServiceName { get; set; }
+        
     }
 
     public class Vm
     {
         public string VmName { get; set; }
+        public string IpAddress { get; set; }
         public VmSetting VmSettings { get; set; }
     }
 
@@ -66,8 +68,8 @@ namespace AzureDeploymentEngine
 
     public class CloudServiceSetting
     {
-        public string CloudServicePrefix { get; set; }
-        public string CloudServiceSuffix { get; set; }
+        public string CloudServiceName { get; set; }
+        public string CloudServiceVmPlacement { get; set; }
 
 
     }
@@ -118,7 +120,7 @@ namespace AzureDeploymentEngine
 
     public class Deployment
     {
-        public string DeploymentFriendlyName { get; set; }
+        public string DeploymentName { get; set; }
         public List<Subscription> Subscriptions { get; set; }
         public ProjectSetting ProjectSettings { get; set; }
         public CloudServiceSetting CloudServiceSettings { get; set; }
