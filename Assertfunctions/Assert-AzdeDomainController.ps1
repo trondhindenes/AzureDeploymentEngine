@@ -33,22 +33,24 @@ Function Assert-AzdeDomainController
     $DomainControllerPrefix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainControllerPrefix" -SettingsType "ProjectSettings" -TargetObject "Project"
     $DomainControllerSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainControllerSuffix" -SettingsType "ProjectSettings" -TargetObject "Project"
     $DomainController.VmName = $DomainControllerPrefix + $ProjectName + $DomainControllerSuffix
+    $DomainController.VmName = $DomainController.VmName.Replace(" ","")
 
     Write-Verbose "Domain controller name: $($DomainController.VmName)"
 
     $domaincontroller.VmSettings = New-Object AzureDeploymentEngine.VmSetting
-    $domaincontroller.VmSettings.Subnet = $subnet.subnet
+    $domaincontroller.VmSettings.Subnet = "sn-" + $subnet.subnet
     $domaincontroller.VmSettings.VmImage = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "VmImage" -SettingsType "VmSettings" -TargetObject "Project"
     $domaincontroller.VmSettings.WaitforVmDeployment = $true
     $domaincontroller.VmSettings.VmCount = 1
     $domaincontroller.VmSettings.AlwaysRedeploy = $false
     
+    $vnetname = $Project.Network.NetworkName
 
     #Figure out the cloud service for the vm
     $CloudServiceName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
     $CloudServicePrefix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServicePrefix" -SettingsType "CloudServiceSettings" -TargetObject "Project"
     $CloudServiceSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceSuffix" -SettingsType "CloudServiceSettings" -TargetObject "Project"
-    [AzureDeploymentEngine.Credential]$DcCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "CloudServiceSettings" -TargetObject "Project"
+    [AzureDeploymentEngine.Credential]$DcCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
 
     if (!($cloudservicename))
     {    
@@ -61,6 +63,6 @@ Function Assert-AzdeDomainController
     $domaincontroller.VmSettings.LocalAdminCredential = $dccredential
 
 
-    Invoke-AzDeVirtualMachine -vm $DomainController -cloudservicename $cloudservicename -affinityGroupName $affinityGroupName
+    Invoke-AzDeVirtualMachine -vm $DomainController -cloudservicename $cloudservicename -affinityGroupName $affinityGroupName -vnetname $vnetname -datadisk 20
     
 }

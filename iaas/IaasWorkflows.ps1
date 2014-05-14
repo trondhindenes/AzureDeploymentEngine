@@ -1,4 +1,4 @@
-Workflow Invoke-AzDeVirtualMachine
+Workflow NOTInvoke-AzDeVirtualMachine
 {
     Param (
         [Parameter(ParameterSetName='SingleVm')]
