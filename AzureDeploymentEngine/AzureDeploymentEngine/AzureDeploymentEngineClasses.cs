@@ -52,14 +52,15 @@ namespace AzureDeploymentEngine
 
     public class Subnet
     {
-        public string subnet { get; set; }
+        public string subnetName { get; set; }
+        public string SubnetCidr { get; set; }
     }
 
     public class PostDeploymentScript
     {
-        public string ScriptDisplayName { get; set; }
+        public string PostDeploymentScriptName { get; set; }
         public int Order { get; set; }
-        public bool WaitforAll { get; set; }
+        //public bool WaitforAll { get; set; }
         public string RunAt { get; set; }
         public string Path { get; set; }
         public string PathType { get; set; }
@@ -76,17 +77,13 @@ namespace AzureDeploymentEngine
 
     public class ProjectSetting
     {
-        public string ProjectStoragePrefix { get; set; }
-        public string ProjectStorageSuffix { get; set; }
         public string ProjectStorageAccountName { get; set; }
-        public string AffinityGroupPrefix { get; set; }
-        public string AffinityGroupSuffix { get; set; }
+        public string AffinityGroupName { get; set; }
         public string Location { get; set; }
         public Credential DomainAdminCredential { get; set; }
         public bool DeployDomainControllersPerProject { get; set; }
         public string AdDomainName { get; set; }
-        public string DomainControllerPrefix { get; set; }
-        public string DomainControllerSuffix { get; set; }
+        public string DomainControllerName { get; set; }
         public string VmNamePrefix { get; set; }
         public string VmNameSuffix { get; set; }
         
