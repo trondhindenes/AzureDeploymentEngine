@@ -84,6 +84,7 @@ namespace AzureDeploymentEngine
         public bool DeployDomainControllersPerProject { get; set; }
         public string AdDomainName { get; set; }
         public string DomainControllerName { get; set; }
+        public string DomainControllerSubnet { get; set; }
         public string VmNamePrefix { get; set; }
         public string VmNameSuffix { get; set; }
         

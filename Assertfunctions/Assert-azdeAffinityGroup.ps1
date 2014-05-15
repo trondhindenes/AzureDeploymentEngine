@@ -8,9 +8,15 @@ Function Assert-azdeAffinityGroup
 
 
     $ProjectName = $Project.ProjectName
-    $AGPrefix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupPrefix" -SettingsType "ProjectSettings" -TargetObject "Project"
+    $AGName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupName" -SettingsType "ProjectSettings" -TargetObject "Project"
     $AGSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupSuffix" -SettingsType "ProjectSettings" -TargetObject "Project"
     $Location = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "Location" -SettingsType "ProjectSettings" -TargetObject "Project"
+
+    if (!$AGName)
+    {
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "I ended up with an empty Affinity Group Name. Using Project Name $($Project.ProjectName) for Affinity Group Name"
+    }
+    
 
     if (!$Location)
     {
@@ -20,7 +26,7 @@ Function Assert-azdeAffinityGroup
 
 
 
-    $ActualAffinityGroupName = $AGPrefix + $ProjectName + $AGSuffix
+    $ActualAffinityGroupName = $AGName.replace("projectname",($Project.ProjectName))
     $ActualAffinityGroupName = $ActualAffinityGroupName.Replace(" ","")
     Enable-AzdeAzureSubscription -SubscriptionId ($Subscription.SubscriptionId)
 

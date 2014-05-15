@@ -16,8 +16,10 @@ $deployment | Add-AzdeSubscription -Subscription $subscription
 
 $depvmsettings = new-object AzureDeploymentEngine.VmSetting
 $depvmsettings.VmImage = "Windows Server 2012 R2 Datacenter"
+$depvmsettings.VmSize = "Small"
 
 $deployment.VmSettings = $depvmsettings
+
 
 $DomainAdminCredential = New-Object AzureDeploymentEngine.Credential
 $DomainAdminCredential.CredentialType = "ClearText"
@@ -32,36 +34,28 @@ $subscription | Add-AzdeProject -Project $project
 
 $projectsettings = New-Object AzureDeploymentEngine.ProjectSetting
 $projectsettings.Location = "West Europe"
-$projectsettings.AffinityGroupPrefix = "AG-"
-$projectsettings.AffinityGroupSuffix = ""
+$projectsettings.AffinityGroupName = "AG-projectname"
 $projectsettings.DeployDomainControllersPerProject = $true
 $projectsettings.DomainAdminCredential = $DomainAdminCredential
+
+#Storageaccount is 1-24 lowercase or numbers
+$projectsettings.ProjectStorageAccountName = "projectnamestorage"
 
 $project.ProjectSettings = $projectsettings
 
 
-
-$vmsettings1 = New-AzdeVmSettings -AlwaysRedeploy $false -vmimage "Windows Server 2012 R2 Datacenter"
-$vmsettings2 = New-AzdeVmSettings -AlwaysRedeploy $true
-
-
-
-
-$deployment.VmSettings = $vmsettings1
-$project.VmSettings = $vmsettings2
-
 $cloudservicesettings = New-Object AzureDeploymentEngine.CloudServiceSetting
-$cloudservicesettings.CloudServiceName = "trond-cs"
+$cloudservicesettings.CloudServiceName = "projectname-cs"
 
 $deployment.CloudServiceSettings = $cloudservicesettings
-$deployment.VmSettings = $vmsettings1
+
 
 $network = New-Object AzureDeploymentEngine.network
 $network.NetworkName = "VNET1"
 $network.AddressPrefix = "10.10.0.0/16"
 $network.Subnets = New-Object AzureDeploymentEngine.Subnet
-$network.Subnets[0].subnet = "10.10.0.10/24"
-
+$network.Subnets[0].subnetName = "sn-10.10.50.0"
+$network.Subnets[0].SubnetCidr = "10.10.50.0/24"
 $project.Network = $network
 
 $deployment | Save-AzdeDeploymentConfiguration -force

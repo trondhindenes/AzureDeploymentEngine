@@ -103,17 +103,17 @@ Function Invoke-network
         Foreach ($subnet in $subnets)
         {
             
-            $subnetname =  $subnet.subnet
+            $subnetname =  $subnet.subnetname
             $subnetobj = "" | Select SubnetPrefix, SubnetName
-            $subnetobj.Subnetprefix = $subnetname
-            $subnetobj.SubnetName = "sn-" + $subnetname
+            $subnetobj.Subnetprefix = $subnet.SubnetCidr
+            $subnetobj.SubnetName = $subnetname
             $ArSubnetsObj += $subnetobj
             $subnetobj,$subnetprefix,$subnetname = $null
         }
 
         #Create the network
         New-AzureANVNetSite -VNetName $networkname -AffinityGroupName $AffinityGroupName -VNetAddressPrefix $network.AddressPrefix -subnets $ArSubnetsObj #-SubnetName $SubnetName -SubnetAddressPrefix $SubnetAddressPrefix 
-        Write-Verbose "NETWORK: network updated"
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Network updated"
     }
 
 
@@ -161,7 +161,7 @@ function Invoke-AzDeVirtualMachine
         
         if (!(Get-AzureService -ServiceName $cloudservice -ErrorAction 0))
         {
-            New-AzureService -AffinityGroup $affinityGroupName -ServiceName $cloudservice
+            New-AzureService -AffinityGroup $affinityGroupName -ServiceName $cloudservice | out-null
         }
 
         #csvms is an array of vms going to the same cs. These will have to be done one by one
@@ -169,18 +169,19 @@ function Invoke-AzDeVirtualMachine
         {   
             $image = Get-AzureVMImage | where {$_.ImageFamily -eq $csvm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
             if (!$image){throw "Could not find the image"}
-            $azurevm = New-AzureVMConfig -Name $csvm.VmName -InstanceSize "Small" -Image $image.imagename
+            $azurevm = New-AzureVMConfig -Name $csvm.VmName -InstanceSize "Small" -Image $image.imagename | Out-Null
             $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $csvm.VmSettings.LocalAdminCredential.UserName -Password $csvm.VmSettings.LocalAdminCredential.Password | out-null
             if ($datadisk)
             {
-                $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisk -DiskLabel 'DataDrive' -LUN 0
+                $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisk -DiskLabel 'DataDrive' -LUN 0 | out-null
             }
 
             if ($csvm.VmSettings.Subnet)
             {
-                $azurevm | Set-AzureSubnet -SubnetNames $csvm.vmsettings.Subnet
+                $azurevm | Set-AzureSubnet -SubnetNames $csvm.vmsettings.Subnet | out-null
             }
-            $azurevm | New-AzureVM -ServiceName $csvm.vmsettings.cloudservicename -VNetName $networkname -WaitForBoot | out-null
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($csvm.VmName)"
+            $azurevm | New-AzureVM -ServiceName $csvm.vmsettings.cloudservicename -VNetName $networkname -WaitForBoot -Verbose:$false | out-null
         }
     }
 
