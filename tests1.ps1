@@ -11,7 +11,7 @@ ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEng
 #Update-Module azuredeploymentenginejson
 
 $deployment = New-AzdeDeployment -DeploymentName "TestDepl"
-$subscription = new-AzdeSubscription -AzureSubscription (Get-AzureSubscription -Current)
+$subscription = new-AzdeSubscription -AzureSubscription (Get-AzureSubscription -SubscriptionName JHEMSDN)
 $deployment | Add-AzdeSubscription -Subscription $subscription
 
 $depvmsettings = new-object AzureDeploymentEngine.VmSetting
@@ -26,7 +26,7 @@ $DomainAdminCredential.Password = "Password12345"
 
 
 
-$project = New-AzdeProject -ProjectName "My Test Project"
+$project = New-AzdeProject -ProjectName "thtest1"
 
 $subscription | Add-AzdeProject -Project $project
 

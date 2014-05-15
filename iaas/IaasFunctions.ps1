@@ -65,6 +65,10 @@ Function Invoke-StorageAccount
 	    Write-Verbose "Storage account $StorageAccountName already exists"
 	}
 
+    if ((Get-AzureSubscription -Current).CurrentStorageAccountName -ne $StorageAccountName)
+    {
+        Get-AzureSubscription -Current | Set-AzureSubscription -CurrentStorageAccountName $StorageAccountName
+    }
     $StorageAccountName
 	
 }
@@ -166,17 +170,17 @@ function Invoke-AzDeVirtualMachine
             $image = Get-AzureVMImage | where {$_.ImageFamily -eq $csvm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
             if (!$image){throw "Could not find the image"}
             $azurevm = New-AzureVMConfig -Name $csvm.VmName -InstanceSize "Small" -Image $image.imagename
-            $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $csvm.VmSettings.LocalAdminCredential.UserName -Password $csvm.VmSettings.LocalAdminCredential.Password
+            $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $csvm.VmSettings.LocalAdminCredential.UserName -Password $csvm.VmSettings.LocalAdminCredential.Password | out-null
             if ($datadisk)
             {
-                $azurevmvm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisk -DiskLabel 'DataDrive' -LUN 0
+                $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisk -DiskLabel 'DataDrive' -LUN 0
             }
 
             if ($csvm.VmSettings.Subnet)
             {
                 $azurevm | Set-AzureSubnet -SubnetNames $csvm.vmsettings.Subnet
             }
-            $azurevm | New-AzureVM -ServiceName $csvm.vmsettings.cloudservicename -VNetName $networkname -WaitForBoot
+            $azurevm | New-AzureVM -ServiceName $csvm.vmsettings.cloudservicename -VNetName $networkname -WaitForBoot | out-null
         }
     }
 
