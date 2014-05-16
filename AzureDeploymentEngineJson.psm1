@@ -9,6 +9,8 @@ add-type -Path "$psscriptroot\Dlls\AzureDeploymentEngine.dll"
 #gci $psscriptroot\PostInstallScripts\*.ps1 | % { . $_.FullName }
 
 gci $psscriptroot\Nikolic-AzureHelpers\*.ps1 | % { . $_.FullName }
+gci $psscriptroot\Credentials\*.ps1 | % { . $_.FullName }
+gci $psscriptroot\PostDeploymentScripts\*.ps1 | % { . $_.FullName }
 gci $psscriptroot\ObjectFunctions2.ps1 | % { . $_.FullName }
 gci $psscriptroot\JsonFunctions.ps1 | % { . $_.FullName }
 gci $psscriptroot\Invoke-AzdeEnvironment.ps1 | % { . $_.FullName }

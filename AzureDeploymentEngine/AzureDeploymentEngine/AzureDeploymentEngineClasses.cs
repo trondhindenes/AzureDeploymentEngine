@@ -32,6 +32,8 @@ namespace AzureDeploymentEngine
         public AzureDeploymentEngine.Credential DomainJoinCredential { get; set; }
         public int VmCount { get; set; }
         public string CloudServiceName { get; set; }
+        public string VnetName { get; set; }
+        public Int64 DataDiskSize { get; set; }
         
     }
 
@@ -65,6 +67,12 @@ namespace AzureDeploymentEngine
         public string Path { get; set; }
         public string PathType { get; set; }
         public List<String> VmNames { get; set; }
+        public List<AzureDeploymentEngine.Vm> VMs { get; set; }
+        //public List<System.Array> VMs { get; set; }
+        public AzureDeploymentEngine.Deployment Deployment { get; set; }
+        public string CloudServiceName { get; set; }
+        public bool RebootOnCompletion { get; set; }
+        public System.Collections.Hashtable Parameters { get; set; }
     }
 
     public class CloudServiceSetting

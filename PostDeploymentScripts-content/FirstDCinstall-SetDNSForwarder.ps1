@@ -1,0 +1,1 @@
+Set-DnsServerForwarder -IPAddress $using:ProjectSettings.DomainControllerDnsForwardingAddress

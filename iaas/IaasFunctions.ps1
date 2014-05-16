@@ -124,65 +124,68 @@ function Invoke-AzDeVirtualMachine
     Param (
         [Parameter(ParameterSetName='SingleVm')]
         [AzureDeploymentEngine.Vm]$vm,
-        [Parameter(ParameterSetName='SingleVm')]
-        $cloudservicename,
-        [Parameter(ParameterSetName='MultipleVMs')]
-        $vms,
-        $affinityGroupName,
-        $vnetname,
-        [int]$datadisk
+        $affinityGroupName
     )
 
-    if (!($vms))
-    {
-      
+    $cloudserviceName = $vm.VmSettings.CloudServiceName
 
-        $vms = @()
-        $vms += $vm
+    if (!($cloudserviceName))
+    {
+        Throw "Invalid or no cloudservice defined"
     }
 
-    if ((!$vm) -and (!$vms))
-    {
-        throw "No VMs Specified"
-    }
 
-    #at this point, we have an array of vms
-    $cloudservices = @()
-    $cloudservices += $vms | ForEach-Object {$_.VmSettings.CloudServiceName}
-
-    if ($cloudservices.count -eq 0)
-    {
-        throw "no cloud services defined. Something bad happened."
-    }
-
-    foreach ($cloudservice in $cloudservices)
-    {
-        $csvms = $vms | where {$_.vmsettings.CloudServiceName -eq $cloudservice}
+    
         
-        if (!(Get-AzureService -ServiceName $cloudservice -ErrorAction 0))
-        {
-            New-AzureService -AffinityGroup $affinityGroupName -ServiceName $cloudservice | out-null
-        }
-
-        #csvms is an array of vms going to the same cs. These will have to be done one by one
-        foreach ($csvm in $csvms)
-        {   
-            $image = Get-AzureVMImage | where {$_.ImageFamily -eq $csvm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
-            if (!$image){throw "Could not find the image"}
-            $azurevm = New-AzureVMConfig -Name $csvm.VmName -InstanceSize "Small" -Image $image.imagename | Out-Null
-            $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $csvm.VmSettings.LocalAdminCredential.UserName -Password $csvm.VmSettings.LocalAdminCredential.Password | out-null
-            if ($datadisk)
-            {
-                $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisk -DiskLabel 'DataDrive' -LUN 0 | out-null
-            }
-
-            if ($csvm.VmSettings.Subnet)
-            {
-                $azurevm | Set-AzureSubnet -SubnetNames $csvm.vmsettings.Subnet | out-null
-            }
-            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($csvm.VmName)"
-            $azurevm | New-AzureVM -ServiceName $csvm.vmsettings.cloudservicename -VNetName $networkname -WaitForBoot -Verbose:$false | out-null
-        }
+    if (!(Get-AzureService -ServiceName $cloudserviceName -ErrorAction 0 -verbose:$false))
+    {
+        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Creating new cloud service $cloudservice"
+        New-AzureService -AffinityGroup $affinityGroupName -ServiceName $cloudserviceName | out-null
     }
+
+    #csvms is an array of vms going to the same cs. These will have to be done one by one
+   
+    #Test if the VM exists
+    $VMsCheck = Get-AzureVM -verbose:$false
+    if ($vmsCheck | where {$_.Name -eq $vm.VmName})
+    {
+        #VM exists
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Found existing vm $($vm.VmName). Skipping."
+        $VMCheck = $VMsCheck | where {$_.Name -eq $vm.VmName}
+        if ($VMCheck.ServiceName -ne $cloudservice)
+        {
+            #VM exists, but in different subnet
+        } 
+        
+        $vmcheck | Add-Member -MemberType NoteProperty -Name "AlreadyExistingVm" -Value $true -Force
+
+        return $VMCheck                               
+    }
+    Else
+    {
+        #Create the VM
+        $image = Get-AzureVMImage -verbose:$false| where {$_.ImageFamily -eq $vm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
+        if (!$image){throw "Could not find the image specified ( $($vm.VmSettings.VmImage) )"}
+        $azurevm = New-AzureVMConfig -Name $vm.VmName -InstanceSize "Small" -Image $image.imagename
+        $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $vm.VmSettings.LocalAdminCredential.UserName -Password $vm.VmSettings.LocalAdminCredential.Password
+        if ($vm.VmSettings.DataDiskSize -gt 0)
+        {
+            $datadisksizeInGb = ($vm.VmSettings.DataDiskSize) / 1GB
+            $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisksizeInGb -DiskLabel 'DataDrive' -LUN 0 | out-null
+        }
+
+        if ($vm.VmSettings.Subnet)
+        {
+            $azurevm | Set-AzureSubnet -SubnetNames $vm.vmsettings.Subnet | out-null
+        }
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($vm.VmName)"
+        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName ($vm.VmSettings.VnetName) -WaitForBoot -Verbose:$false
+        $azurevm | Add-Member -MemberType NoteProperty -Name "AlreadyExistingVm" -Value $true -Force
+        return $azurevm
+    }
+
+      
+    
+
 
 }

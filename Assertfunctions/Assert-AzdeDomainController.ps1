@@ -49,8 +49,10 @@ Function Assert-AzdeDomainController
     $domaincontroller.VmSettings.WaitforVmDeployment = $true
     $domaincontroller.VmSettings.VmCount = 1
     $domaincontroller.VmSettings.AlwaysRedeploy = $false
+    $domaincontroller.VmSettings.VnetName = $Project.Network.NetworkName
+    $domaincontroller.VmSettings.DataDiskSize = 5GB
     
-    $vnetname = $Project.Network.NetworkName
+    
 
     #Figure out the cloud service for the vm
     $CloudServiceName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
@@ -73,6 +75,22 @@ Function Assert-AzdeDomainController
     $domaincontroller.VmSettings.LocalAdminCredential = $dccredential
 
 
-    Invoke-AzDeVirtualMachine -vm $DomainController -cloudservicename $cloudservicename -affinityGroupName $affinityGroupName -vnetname $vnetname -datadisk 20
+    $DCvm = Invoke-AzDeVirtualMachine -vm $DomainController -affinityGroupName $affinityGroupName
     
+    if ($dcvm.AlreadyExistingVm)
+    {
+        #VM already existed. We should run some kind of verification script here.
+    }
+    
+    $DCPostInstallScript = New-Object AzureDeploymentEngine.PostDeploymentScript
+    $DCPostInstallScript.Path = "$psscriptroot\PostInstallScripts-content\FirstDCinstall.ps1"
+    $DCPostInstallScript.VmNames = $domaincontroller.VmName
+    $DCPostInstallScript.CloudServiceName = $DomainController.VmSettings.CloudServiceName
+    #We send in the deployment as well. This thing contains stuff like credentials and such
+    #$DCPostInstallScript.Deployment = $Deployment
+    $dcpostinstallscript.PathType = "FileFromLocal"
+    $dcpostinstallscript.RebootOnCompletion = $true
+
+
+    invoke-PostDeploymentScript -PostDeploymentScript $DCPostInstallScript
 }

@@ -61,6 +61,8 @@ $project.Network = $network
 $deployment | Save-AzdeDeploymentConfiguration -force
 $VerbosePreference = "Continue"
 $verboselevel = 3
+
+ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psm1 -Force
 Invoke-AzdeDeployment -Deployment $deployment
 
 $deployment2 = Import-AzdeDeploymentConfiguration -Path "D:\trond.hindenes\Documents\AzureDeploymentEngine\TestDepl\TestDepl.json"
