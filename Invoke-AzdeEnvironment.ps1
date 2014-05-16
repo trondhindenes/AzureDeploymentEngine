@@ -1,3 +1,8 @@
+$invocation = (Get-Variable MyInvocation).Value
+$moduleFilePath =  $invocation.MyCommand.Path
+$modulefolderpath = $moduleFilePath | split-path
+
+
 function Invoke-AzdeDeployment {
     Param (
         [AzureDeploymentEngine.Deployment]$Deployment,

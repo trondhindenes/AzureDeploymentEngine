@@ -19,6 +19,10 @@ Function Invoke-PostDeploymentScript
         
         #Get the creds:
         $VMWinRmCreds = $vm.VmSettings.DomainJoinCredential
+        if (!$VMWinRmCreds)
+        {
+            $VMWinRmCreds = $vm.VmSettings.LocalAdminCredential
+        }
 
         $Credobject = Get-AzdeCredObject -credential $VMWinRmCreds
 
@@ -27,7 +31,7 @@ Function Invoke-PostDeploymentScript
         Do {
             if ($retries -gt 1)
             {
-                Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "POSTINSTALLSCRIPT: Attempting to connect to computer $($vmobject.Name) on uri $winrmuri - attempt $retries"
+                Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "POSTINSTALLSCRIPT: Attempting to connect to computer $($vm.VmName) on uri $winrmuri - attempt $retries"
                 start-sleep -Seconds 10
             }
             $testsession = Invoke-Command -ConnectionUri $winRMUri.AbsoluteUri -Credential $Credobject -SessionOption $Pssessionoption -ScriptBlock {
@@ -85,14 +89,23 @@ Function Invoke-PostDeploymentScript
             remove-item $savepath -erroraction 0
         }
 
-        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Running script $ScriptName on VM $($vmobject.name)"
-        $Result = Invoke-Command -ConnectionUri $winRMUri.AbsoluteUri -Credential $credentials -SessionOption $Pssessionoption -ScriptBlock $Scriptblock -ErrorAction 0
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Running script $ScriptName on VM $($vm.VmName)"
+        $Result = Invoke-Command -ConnectionUri $winRMUri.AbsoluteUri -Credential $Credobject -SessionOption $Pssessionoption -ScriptBlock $Scriptblock -ErrorAction 0 -ErrorVariable scripterror
+        if ($scripterror)
+        {
+            foreach ($message in $scripterror)
+            {
+                Write-error $message
+            }
+        }
+        
         Write-verbose "POSTSCRIPT: Result:"
         $result
 
         if ($rebootoncompletion)
         {
-            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Running post-script reboot on VM $($vmobject.name)"
+            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Running post-script reboot on VM $($vm.VmName)"
+            #restart doesnt wait. Need to build some logic for dat.
             $AzureVMObject | restart-azurevm | out-null
         }
 

@@ -30,6 +30,17 @@ Function Assert-AzdeDomainController
 
     }
 
+    
+    #Get the domain settings
+    if (!($Project.ProjectSettings.AdDomainName))
+    {
+        $Project.ProjectSettings.AdDomainName = $projectname.Replace(" ","")
+        $Project.ProjectSettings.AdDomainName = $Project.ProjectSettings.AdDomainName + ".ad"
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "setting AD domain name to $($Project.ProjectSettings.AdDomainName)"
+    }
+
+    $azdeAdDomainName = $project.ProjectSettings.AdDomainName
+
     $DomainController = New-Object AzureDeploymentEngine.Vm
     $DomainControllerName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainControllerName" -SettingsType "ProjectSettings" -TargetObject "Project"
     #$DomainControllerSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainControllerSuffix" -SettingsType "ProjectSettings" -TargetObject "Project"
@@ -83,8 +94,8 @@ Function Assert-AzdeDomainController
     }
     
     $DCPostInstallScript = New-Object AzureDeploymentEngine.PostDeploymentScript
-    $DCPostInstallScript.Path = "$psscriptroot\PostInstallScripts-content\FirstDCinstall.ps1"
-    $DCPostInstallScript.VmNames = $domaincontroller.VmName
+    $DCPostInstallScript.Path = "$modulefolderpath\PostDeploymentScripts-content\FirstDCinstall.ps1"
+    $DCPostInstallScript.Vms = $DomainController
     $DCPostInstallScript.CloudServiceName = $DomainController.VmSettings.CloudServiceName
     #We send in the deployment as well. This thing contains stuff like credentials and such
     #$DCPostInstallScript.Deployment = $Deployment

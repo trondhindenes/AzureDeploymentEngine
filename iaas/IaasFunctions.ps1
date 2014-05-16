@@ -156,6 +156,13 @@ function Invoke-AzDeVirtualMachine
         {
             #VM exists, but in different subnet
         } 
+
+        if ($VMCheck.Status -ne "ReadyRole")
+        {
+            #VM exists, but is turned off. Booting
+             $VMCheck | Start-AzureVM
+
+        }
         
         $vmcheck | Add-Member -MemberType NoteProperty -Name "AlreadyExistingVm" -Value $true -Force
 
