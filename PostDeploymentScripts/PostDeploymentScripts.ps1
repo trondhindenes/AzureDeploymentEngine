@@ -128,15 +128,3 @@ Function Invoke-PostDeploymentScript
     }
 
 
-
-
-    
-    
-    
-    
-    
-    if ($vmobject.DomainJoinCredentials){$credentials = $vmobject.DomainJoinCredentials}
-    Else {$credentials = $vmobject.DefaultCredentials}
-
-    
-    

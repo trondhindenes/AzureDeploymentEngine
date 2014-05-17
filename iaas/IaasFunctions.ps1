@@ -160,7 +160,7 @@ function Invoke-AzDeVirtualMachine
         if ($VMCheck.Status -ne "ReadyRole")
         {
             #VM exists, but is turned off. Booting
-             $VMCheck | Start-AzureVM
+             Start-AzdeAzureVM -vm $VMCheck -wait $true
 
         }
         
@@ -194,5 +194,41 @@ function Invoke-AzDeVirtualMachine
       
     
 
+
+}
+
+
+function Start-AzdeAzureVM
+{
+    Param (
+        $vm,
+        [bool]$waitforboot
+    )
+    $vm = get-azurevm -Name $vm.Name -ServiceName $vm.servicename
+    if (!$vm)
+    {
+        throw "Couldnt find that vm"
+    }
+
+    $vm | Start-AzureVM
+    
+        #Attempt connection
+        $retries = 0
+        Do {
+            if ($retries -gt 1)
+            {
+                start-sleep -Seconds 10
+            }
+            
+            $vm = $vm | get-azurevm
+
+            $retries ++
+        }
+        until (($retries -gt 10) -or ($vm.status -eq "ReadyROle"))
+        if ($retries -gt 10)
+        {
+            Write-error "Timed out waiting for VM to start"
+        }
+    
 
 }
