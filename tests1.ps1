@@ -5,13 +5,13 @@ $items | Copy-Item -Destination D:\trond.hindenes\Documents\Scripts\Powershell\M
 
 if (Get-Module AzureDeploymentEngineJson){Remove-Module AzureDeploymentEngineJson}
 
-#ipmo "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psd1"
-ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psm1 -Force
+ipmo "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psd1" -force
+#ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psm1 -Force
 
 #Update-Module azuredeploymentenginejson
 
 $deployment = New-AzdeDeployment -DeploymentName "TestDepl"
-$subscription = new-AzdeSubscription -AzureSubscription (Get-AzureSubscription -SubscriptionName JHEMSDN)
+$subscription = new-AzdeSubscription -AzureSubscription (Get-AzureSubscription -SubscriptionName JHEMSDN -ErrorAction stop)
 $deployment | Add-AzdeSubscription -Subscription $subscription
 
 $depvmsettings = new-object AzureDeploymentEngine.VmSetting
