@@ -1,5 +1,6 @@
 Function Invoke-PostDeploymentScript
 {
+    [CmdletBinding()]
     Param (
         [AzureDeploymentEngine.PostDeploymentScript]$PostDeploymentScript
     )

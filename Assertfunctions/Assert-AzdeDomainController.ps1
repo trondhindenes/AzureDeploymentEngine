@@ -88,20 +88,47 @@ Function Assert-AzdeDomainController
 
     $DCvm = Invoke-AzDeVirtualMachine -vm $DomainController -affinityGroupName $affinityGroupName
     
+    $InstallDC = $false
+
     if ($dcvm.AlreadyExistingVm)
     {
-        #VM already existed. We should run some kind of verification script here.
+        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "DC already existed, Running verification script"
+        #VM already existed. Run verification script
+        $DCPostInstallScript = New-Object AzureDeploymentEngine.PostDeploymentScript
+        $DCPostInstallScript.Path = "$modulefolderpath\PostDeploymentScripts-content\DCVerification.ps1"
+        $DCPostInstallScript.Vms = $DomainController
+        $DCPostInstallScript.CloudServiceName = $DomainController.VmSettings.CloudServiceName
+        #We send in the deployment as well. This thing contains stuff like credentials and such
+        #$DCPostInstallScript.Deployment = $Deployment
+        $dcpostinstallscript.PathType = "FileFromLocal"
+        $dcpostinstallscript.RebootOnCompletion = $false
+
+        invoke-PostDeploymentScript -PostDeploymentScript $DCPostInstallScript -ErrorVariable verificationfailed -ErrorAction SilentlyContinue
+        if ($verificationfailed)
+        {
+            #Verificatino threw an error, attempt installing the DC
+            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Verification failed, calling DC install script"
+            $InstallDC = $true
+        }
+    }
+    Else
+    {
+        $InstallDC = $true
+
+    }
+
+    if ($InstallDC)
+    {
+        $DCPostInstallScript = New-Object AzureDeploymentEngine.PostDeploymentScript
+        $DCPostInstallScript.Path = "$modulefolderpath\PostDeploymentScripts-content\FirstDCinstall.ps1"
+        $DCPostInstallScript.Vms = $DomainController
+        $DCPostInstallScript.CloudServiceName = $DomainController.VmSettings.CloudServiceName
+        #We send in the deployment as well. This thing contains stuff like credentials and such
+        #$DCPostInstallScript.Deployment = $Deployment
+        $dcpostinstallscript.PathType = "FileFromLocal"
+        $dcpostinstallscript.RebootOnCompletion = $true
+        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "running DC install script"
+        invoke-PostDeploymentScript -PostDeploymentScript $DCPostInstallScript
     }
     
-    $DCPostInstallScript = New-Object AzureDeploymentEngine.PostDeploymentScript
-    $DCPostInstallScript.Path = "$modulefolderpath\PostDeploymentScripts-content\FirstDCinstall.ps1"
-    $DCPostInstallScript.Vms = $DomainController
-    $DCPostInstallScript.CloudServiceName = $DomainController.VmSettings.CloudServiceName
-    #We send in the deployment as well. This thing contains stuff like credentials and such
-    #$DCPostInstallScript.Deployment = $Deployment
-    $dcpostinstallscript.PathType = "FileFromLocal"
-    $dcpostinstallscript.RebootOnCompletion = $true
-
-
-    invoke-PostDeploymentScript -PostDeploymentScript $DCPostInstallScript
 }
