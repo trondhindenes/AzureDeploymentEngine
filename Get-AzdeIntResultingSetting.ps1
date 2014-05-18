@@ -12,17 +12,15 @@
 
     $ThisVerboseLevel = 3
 
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Command: Get-AzdeIntResultingSetting"
-
     #DeploymentSetting
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      Getting settings for attribute: $settingsattribute"
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      Settingstype: $SettingsType"
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      TargetObject: $TargetObject"
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      ProjectName: $ProjectName"
+    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Getting settings for attribute: $settingsattribute"
+    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Settingstype: $SettingsType"
+    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "TargetObject: $TargetObject"
+    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "ProjectName: $ProjectName"
     
     $Setting = $deployment.$SettingsType.$settingsAttribute
     
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      Deployment Level: $Setting"
+    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Deployment Level: $Setting"
 
 
     if (($TargetObject -ne "Deployment"))
@@ -31,7 +29,7 @@
         $TestSetting = $subscription.$SettingsType.$settingsAttribute
         if ($TestSetting) {
             $Setting =$TestSetting
-            Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      Subscription Level: $Setting"
+            Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Subscription Level: $Setting"
             }
         
     }
@@ -42,7 +40,7 @@
         $TestSetting = $project.$SettingsType.$settingsAttribute
         if ($TestSetting) {
             $Setting =$TestSetting
-            Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "      Project Level: $Setting"
+            Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Project Level: $Setting"
             }
         
     }

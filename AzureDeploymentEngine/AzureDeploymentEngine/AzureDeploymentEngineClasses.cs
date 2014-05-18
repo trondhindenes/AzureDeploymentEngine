@@ -26,6 +26,7 @@ namespace AzureDeploymentEngine
         public bool JoinDomain { get; set; }
         public bool WaitforVmDeployment { get; set; }
         public bool AlwaysRedeploy { get; set; }
+        public bool AlwaysRerunScripts { get; set; }
         public bool MoveVmToCorrectSubnet { get; set; }
         public bool AllowIpAddressChange { get; set; }
         public AzureDeploymentEngine.Credential LocalAdminCredential { get; set; }
@@ -73,6 +74,16 @@ namespace AzureDeploymentEngine
         public string CloudServiceName { get; set; }
         public bool RebootOnCompletion { get; set; }
         public System.Collections.Hashtable Parameters { get; set; }
+    }
+
+    public class artifact
+    {
+        public string LocalPath { get; set; }
+        public bool IsDirectory { get; set; }
+        public string TargetPath { get; set; }
+        public List<String> VmNames { get; set; }
+        public List<AzureDeploymentEngine.Vm> VMs { get; set; }
+
     }
 
     public class CloudServiceSetting

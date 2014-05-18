@@ -10,8 +10,17 @@ Function Invoke-PostDeploymentScript
         #Main loop for script
         Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Staring post-deployment script for vm $($vm.VmName)"
         
+        if ($PostDeploymentScript.CloudServiceName)
+        {
+            $cloudservicename = $PostDeploymentScript.CloudServiceName
+        }
+        ElseIf ($vm.VmSettings.CloudServiceName)
+        {
+                $cloudservicename = $vm.VmSettings.CloudServiceName
+        }
+
         #Cloud service name may come in another format. More logic needed here
-        $AzureVMObject = Get-AzureVM -Name $vm.VmName -ServiceName $vm.VmSettings.CloudServiceName
+        $AzureVMObject = Get-AzureVM -Name $vm.VmName -ServiceName $cloudservicename
         $winRMUri = $AzureVMObject | Get-AzureWinRMUri
         $Pssessionoption = New-PSSessionOption
         $Pssessionoption.SkipCACheck = $true
@@ -113,7 +122,7 @@ Function Invoke-PostDeploymentScript
         $WaitSeconds = 0
         $vmisdeployed = $false
         Do {
-            $AzureVMObject = get-azurevm -ServiceName $vm.VmSettings.CloudServiceName -Name $vm.VmName -ErrorAction 0
+            $AzureVMObject = get-azurevm -ServiceName $cloudservicename -Name $vm.VmName -ErrorAction 0
             start-sleep -seconds $WaitSeconds
             $waitseconds = 10
             #Wait for VM to be readyrole

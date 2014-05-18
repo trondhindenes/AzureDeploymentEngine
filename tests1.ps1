@@ -17,6 +17,8 @@ $deployment | Add-AzdeSubscription -Subscription $subscription
 $depvmsettings = new-object AzureDeploymentEngine.VmSetting
 $depvmsettings.VmImage = "Windows Server 2012 R2 Datacenter"
 $depvmsettings.VmSize = "Small"
+$depvmsettings.JoinDomain = $true
+$depvmsettings.AlwaysRerunScripts = $true
 
 $deployment.VmSettings = $depvmsettings
 
@@ -37,6 +39,7 @@ $projectsettings.Location = "West Europe"
 $projectsettings.AffinityGroupName = "AG-projectname"
 $projectsettings.DeployDomainControllersPerProject = $true
 $projectsettings.DomainAdminCredential = $DomainAdminCredential
+$projectsettings.AdDomainName =  "ad.thlab.local"
 
 #Storageaccount is 1-24 lowercase or numbers
 $projectsettings.ProjectStorageAccountName = "projectnamestorage"
@@ -58,11 +61,30 @@ $network.Subnets[0].subnetName = "sn-10.10.50.0"
 $network.Subnets[0].SubnetCidr = "10.10.50.0/24"
 $project.Network = $network
 
-$deployment | Save-AzdeDeploymentConfiguration -force
+$project.Vms = New-Object AzureDeploymentEngine.Vm
+$project.Vms[0].VmName = "projectnameVM01"
+$project.vms.Add((new-object AzureDeploymentEngine.Vm))
+$project.vms[1].VmName = "projectnameVM02"
+
+$pdscript = New-Object AzureDeploymentEngine.PostDeploymentScript
+$pdscript.Order = 1
+$pdscript.Path = "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\PostDeploymentScripts-examples\iis.ps1"
+$pdscript.PathType = "ScriptFromLocal"
+$pdscript.VmNames= "projectnameVM01","projectnameVM02"
+$pdscript.PostDeploymentScriptName = "Install IIS n stuff"
+
+$project.PostDeploymentScripts = $pdscript
+
+
+
+
+
+$deployment | Save-AzdeDeploymentConfiguration -force -Verbose
 $VerbosePreference = "Continue"
 $verboselevel = 3
 
+ipmo "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psd1" -force
 #ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psm1 -Force
-Invoke-AzdeDeployment -Deployment $deployment
+Invoke-AzdeDeployment -Deployment $deployment -SkipDomainController
 
 $deployment2 = Import-AzdeDeploymentConfiguration -Path "D:\trond.hindenes\Documents\AzureDeploymentEngine\TestDepl\TestDepl.json"

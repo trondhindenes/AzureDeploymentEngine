@@ -14,5 +14,11 @@ namespace AzureDeploymentEngine
             AzureDeploymentEngine.Deployment ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Deployment>(JsonString);
                 return ConvertedObject;
         }
+
+        public AzureDeploymentEngine.Vm ConvertToVmFromJson(string JsonString)
+        {
+            AzureDeploymentEngine.Vm ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Vm>(JsonString);
+            return ConvertedObject;
+        }
     }
 }

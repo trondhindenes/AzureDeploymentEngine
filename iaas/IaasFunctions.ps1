@@ -159,8 +159,8 @@ function Invoke-AzDeVirtualMachine
 
         if ($VMCheck.Status -ne "ReadyRole")
         {
-            #VM exists, but is turned off. Booting
-             Start-AzdeAzureVM -vm $VMCheck -wait $true
+            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Existing vm $($vm.VmName) is shutdown. Booting."
+            Start-AzdeAzureVM -vm $VMCheck -wait $true
 
         }
         
@@ -174,7 +174,26 @@ function Invoke-AzDeVirtualMachine
         $image = Get-AzureVMImage -verbose:$false| where {$_.ImageFamily -eq $vm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
         if (!$image){throw "Could not find the image specified ( $($vm.VmSettings.VmImage) )"}
         $azurevm = New-AzureVMConfig -Name $vm.VmName -InstanceSize "Small" -Image $image.imagename
-        $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $vm.VmSettings.LocalAdminCredential.UserName -Password $vm.VmSettings.LocalAdminCredential.Password
+        if ($vm.VmSettings.JoinDomain -eq $true)
+        {
+            #TODO: This code should be moved out of here:
+            #Get the domain settings
+            if (!($Project.ProjectSettings.AdDomainName))
+            {
+                $Project.ProjectSettings.AdDomainName = $projectname.Replace(" ","")
+                $Project.ProjectSettings.AdDomainName = $Project.ProjectSettings.AdDomainName + ".ad"
+                Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "setting AD domain name to $($Project.ProjectSettings.AdDomainName)"
+            }
+
+            $azdeAdDomainName = $project.ProjectSettings.AdDomainName
+            $azurevm | Add-AzureProvisioningConfig -WindowsDomain -AdminUsername $vm.VmSettings.LocalAdminCredential.UserName -Password $vm.VmSettings.LocalAdminCredential.Password -domainpassword $vm.VmSettings.DomainJoinCredential.Password -DomainUserName $vm.VmSettings.DomainJoinCredential.UserName -Domain $azdeAdDomainName -JoinDomain $azdeAdDomainName | out-null
+        }
+        Else
+        {
+            $azurevm | Add-AzureProvisioningConfig -Windows -AdminUserName $vm.VmSettings.LocalAdminCredential.UserName -Password $vm.VmSettings.LocalAdminCredential.Password        
+        }
+        
+        
         if ($vm.VmSettings.DataDiskSize -gt 0)
         {
             $datadisksizeInGb = ($vm.VmSettings.DataDiskSize) / 1GB
@@ -207,7 +226,7 @@ function Start-AzdeAzureVM
     $vm = get-azurevm -Name $vm.Name -ServiceName $vm.servicename
     if (!$vm)
     {
-        throw "Couldnt find that vm"
+        write-error "I was told to start VM $($vm.Name) in cloudservice $($vm.servicename), but I couldn't find it."
     }
 
     $vm | Start-AzureVM
@@ -224,10 +243,10 @@ function Start-AzdeAzureVM
 
             $retries ++
         }
-        until (($retries -gt 10) -or ($vm.status -eq "ReadyROle"))
-        if ($retries -gt 10)
+        until (($retries -gt 30) -or ($vm.status -eq "ReadyROle"))
+        if ($retries -gt 30)
         {
-            Write-error "Timed out waiting for VM to start"
+            Write-error "Timed out waiting for VM $($vm.Name) to start"
         }
     
 

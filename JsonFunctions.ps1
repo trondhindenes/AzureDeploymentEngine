@@ -43,3 +43,22 @@ Function Import-AzdeDeploymentConfiguration
     $Deployment = $jsonconverter.ConvertToDeploymentFromJson($jsonstring)
     $Deployment
 }
+
+
+Function Import-AzdeVMConfiguration
+{
+    Param ($Path,$string)
+    if ($string)
+    {
+        $jsonstring = $string
+    }
+    Else
+    {
+        $jsonstring = Get-content $Path -Raw
+    }
+    
+    
+    $jsonconverter = New-Object AzureDeploymentEngine.JsonFunctions
+    $vm = $jsonconverter.ConvertToVmFromJson($jsonstring)
+    $vm
+}

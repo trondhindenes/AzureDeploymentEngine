@@ -129,6 +129,11 @@ Function Assert-AzdeDomainController
         $dcpostinstallscript.RebootOnCompletion = $true
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "running DC install script"
         invoke-PostDeploymentScript -PostDeploymentScript $DCPostInstallScript
+
+        #Set the network's DNS server to the ip address of the DC
+        $dcvm = Get-AzureVM -Name $DomainController.VmName -ServiceName $DomainController.VmSettings.CloudServiceName
+        Add-AzureANDnsServerConfiguration -Name $azdeAdDomainName -IpAddress $dcvm.IpAddress -VNetName $networkname
     }
     
+    Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "DC should be up and running at this point"
 }

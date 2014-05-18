@@ -7,7 +7,8 @@ function Invoke-AzdeDeployment {
     Param (
         [AzureDeploymentEngine.Deployment]$Deployment,
         $subscription,
-        $Project
+        $Project,
+        [switch]$SkipDomainController
     )
 
     Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Command: Invoke-AzdeDeployment"
@@ -71,6 +72,17 @@ function Invoke-AzdeDeployment {
 
 
     #DC
-    Assert-AzdeDomainController -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup
+    if (!($SkipDomainController))
+    {
+        Assert-AzdeDomainController -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup
+    }
+    Else
+    {
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Skipping Domain controller deployment"
+    }
+
+    #VMs
+    $deployedVMs = Assert-azdeVirtualMachine -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup 
+    Assert-AzdePostDeploymentScript -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup -vms $deployedVMs
 
 }

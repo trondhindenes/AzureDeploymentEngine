@@ -1,0 +1,102 @@
+{
+    "DeploymentName":  "TestDepl",
+    "Subscriptions":  [
+                          {
+                              "SubscriptionDisplayName":  "JHEMSDN",
+                              "SubscriptionId":  "b20ffc13-1d64-4ae1-8735-8e24dba2e5dd",
+                              "Projects":  [
+                                               {
+                                                   "ProjectName":  "thtest1",
+                                                   "ProjectSettings":  {
+                                                                           "ProjectStorageAccountName":  "projectnamestorage",
+                                                                           "AffinityGroupName":  "AG-projectname",
+                                                                           "Location":  "West Europe",
+                                                                           "DomainAdminCredential":  {
+                                                                                                         "UserName":  "thadministrator",
+                                                                                                         "Password":  "Password12345",
+                                                                                                         "Domain":  null,
+                                                                                                         "SecurePassword":  null,
+                                                                                                         "PSCredential":  null,
+                                                                                                         "CredentialType":  "ClearText"
+                                                                                                     },
+                                                                           "DeployDomainControllersPerProject":  true,
+                                                                           "AdDomainName":  "ad.thlab.local",
+                                                                           "DomainControllerName":  null,
+                                                                           "DomainControllerSubnet":  null,
+                                                                           "SetDomainControllerForwarderAddress":  false,
+                                                                           "VmNamePrefix":  null,
+                                                                           "VmNameSuffix":  null,
+                                                                           "DontUseVirtualNetworks":  false
+                                                                       },
+                                                   "CloudServiceSettings":  null,
+                                                   "VmSettings":  null,
+                                                   "Vms":  [
+                                                               {
+                                                                   "VmName":  "projectnameVM01",
+                                                                   "IpAddress":  null,
+                                                                   "VmSettings":  null
+                                                               },
+                                                               {
+                                                                   "VmName":  "projectnameVM02",
+                                                                   "IpAddress":  null,
+                                                                   "VmSettings":  null
+                                                               }
+                                                           ],
+                                                   "Network":  {
+                                                                   "NetworkName":  "VNET1",
+                                                                   "AddressPrefix":  "10.10.0.0/16",
+                                                                   "Subnets":  [
+                                                                                   {
+                                                                                       "subnetName":  "sn-10.10.50.0",
+                                                                                       "SubnetCidr":  "10.10.50.0/24"
+                                                                                   }
+                                                                               ]
+                                                               },
+                                                   "PostDeploymentScripts":  [
+                                                                                 {
+                                                                                     "PostDeploymentScriptName":  "Install IIS n stuff",
+                                                                                     "Order":  1,
+                                                                                     "RunAt":  null,
+                                                                                     "Path":  "D:\\trond.hindenes\\Documents\\Scripts\\Powershell\\ModuleDev\\AzureDeploymentEngineJson\\PostDeploymentScripts-examples\\iis.ps1",
+                                                                                     "PathType":  "ScriptFromLocal",
+                                                                                     "VmNames":  [
+                                                                                                     "projectnameVM01",
+                                                                                                     "projectnameVM02"
+                                                                                                 ],
+                                                                                     "VMs":  null,
+                                                                                     "Deployment":  null,
+                                                                                     "CloudServiceName":  null,
+                                                                                     "RebootOnCompletion":  false,
+                                                                                     "Parameters":  null
+                                                                                 }
+                                                                             ]
+                                               }
+                                           ],
+                              "ProjectSettings":  null,
+                              "CloudServiceSettings":  null,
+                              "VmSettings":  null
+                          }
+                      ],
+    "ProjectSettings":  null,
+    "CloudServiceSettings":  {
+                                 "CloudServiceName":  "projectname-cs",
+                                 "CloudServiceVmPlacement":  null
+                             },
+    "VmSettings":  {
+                       "VmImage":  "Windows Server 2012 R2 Datacenter",
+                       "VmSize":  "Small",
+                       "Subnet":  null,
+                       "JoinDomain":  true,
+                       "WaitforVmDeployment":  false,
+                       "AlwaysRedeploy":  false,
+                       "AlwaysRerunScripts":  true,
+                       "MoveVmToCorrectSubnet":  false,
+                       "AllowIpAddressChange":  false,
+                       "LocalAdminCredential":  null,
+                       "DomainJoinCredential":  null,
+                       "VmCount":  0,
+                       "CloudServiceName":  null,
+                       "VnetName":  null,
+                       "DataDiskSize":  0
+                   }
+}
