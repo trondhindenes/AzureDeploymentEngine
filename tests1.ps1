@@ -65,18 +65,12 @@ $project.Vms = New-Object AzureDeploymentEngine.Vm
 $project.Vms[0].VmName = "projectnameVM01"
 $project.Vms[0].VmSettings = New-Object AzureDeploymentEngine.VmSetting
 $project.Vms[0].VmSettings.CloudServiceName = "thtest-webtier01"
+$project.Vms[0].VmSettings.AlwaysRerunScripts = $true
 $project.vms.Add((new-object AzureDeploymentEngine.Vm))
 $project.vms[1].VmName = "projectnameVM02"
 $project.Vms[1].VmSettings = New-Object AzureDeploymentEngine.VmSetting
 $project.Vms[1].VmSettings.CloudServiceName = "thtest-webtier01"
-
-$pdscript = New-Object AzureDeploymentEngine.PostDeploymentScript
-$pdscript.Order = 1
-$pdscript.Path = "D:\trond.hindenes\Downloads\chromecastinstaller.exe"
-$pdscript.PathType = "CopyFileFromLocal"
-$pdscript.VmNames= "projectnameVM01","projectnameVM02"
-$pdscript.PostDeploymentScriptName = "Copy some file"
-
+$project.Vms[1].VmSettings.AlwaysRerunScripts = $true
 
 
 $pdscript = New-Object AzureDeploymentEngine.PostDeploymentScript
@@ -87,6 +81,15 @@ $pdscript.VmNames= "projectnameVM01","projectnameVM02"
 $pdscript.PostDeploymentScriptName = "Install IIS n stuff"
 
 $project.PostDeploymentScripts = $pdscript
+
+$pdscript2 = New-Object AzureDeploymentEngine.PostDeploymentScript
+$pdscript2.Order = 1
+$pdscript2.Path = "D:\trond.hindenes\Downloads\chromecastinstaller.exe"
+$pdscript2.PathType = "CopyFileFromLocal"
+$pdscript2.VmNames= "projectnameVM01","projectnameVM02"
+$pdscript2.PostDeploymentScriptName = "Copy some file"
+
+$deployment.Subscriptions[0].Projects[0].PostDeploymentScripts.Add($pdscript2)
 
 
 

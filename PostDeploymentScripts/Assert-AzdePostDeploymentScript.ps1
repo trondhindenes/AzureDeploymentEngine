@@ -11,6 +11,7 @@ Function Assert-azdePostDeploymentScript
 
     #Get the post deployment scripts
     $PDscripts = $Project.PostDeploymentScripts
+    $pdscripts = $PDscripts | Sort-Object Order
 
     #Foreach Script, get the VMs
     foreach ($pdscript in $PDscripts)

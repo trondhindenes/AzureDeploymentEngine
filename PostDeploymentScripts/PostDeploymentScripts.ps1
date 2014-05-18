@@ -71,8 +71,9 @@ Function Invoke-PostDeploymentScript
 
             #First, copy the file up. Then invoke script to have the VM download it
             $FileCopyObject = copy-FileToAzure -path $scriptpath -storageaccountname $storageaccount
+            $copyscript = "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\PostDeploymentScripts-content\DownloadFileFromBlob.ps1"
 
-            $scriptblockstring  = [system.io.file]::ReadAllText($scriptpath)
+            $scriptblockstring  = [system.io.file]::ReadAllText($copyscript)
             $scriptblock = $executioncontext.invokecommand.NewScriptBlock($scriptblockstring)
         }
 
@@ -150,6 +151,13 @@ Function Invoke-PostDeploymentScript
         }
         until ($vmisdeployed)
      }
+
+     #If this was a copy-operation, clean up the blob
+     if ($ScriptType -eq "CopyFileFromLocal")
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 3 -Message "cleaning up blob"
+            Remove-AzureBlobAndContainer -inputobj ($FileCopyObject.ReturnUri) -removeContainer $true
+        }
 
     }
 
