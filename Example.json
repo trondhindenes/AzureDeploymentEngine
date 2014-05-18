@@ -58,7 +58,7 @@
                                                                                      "Order":  1,
                                                                                      "RunAt":  null,
                                                                                      "Path":  "D:\\trond.hindenes\\Documents\\Scripts\\Powershell\\ModuleDev\\AzureDeploymentEngineJson\\PostDeploymentScripts-examples\\iis.ps1",
-                                                                                     "PathType":  "ScriptFromLocal",
+                                                                                     "PathType":  "FileFromLocal",
                                                                                      "VmNames":  [
                                                                                                      "projectnameVM01",
                                                                                                      "projectnameVM02"

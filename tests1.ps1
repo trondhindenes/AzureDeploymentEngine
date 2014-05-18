@@ -63,13 +63,18 @@ $project.Network = $network
 
 $project.Vms = New-Object AzureDeploymentEngine.Vm
 $project.Vms[0].VmName = "projectnameVM01"
+$project.Vms[0].VmSettings = New-Object AzureDeploymentEngine.VmSetting
+$project.Vms[0].VmSettings.CloudServiceName = "thtest-webtier01"
 $project.vms.Add((new-object AzureDeploymentEngine.Vm))
 $project.vms[1].VmName = "projectnameVM02"
+$project.Vms[1].VmSettings = New-Object AzureDeploymentEngine.VmSetting
+$project.Vms[1].VmSettings.CloudServiceName = "thtest-webtier01"
+
 
 $pdscript = New-Object AzureDeploymentEngine.PostDeploymentScript
 $pdscript.Order = 1
 $pdscript.Path = "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\PostDeploymentScripts-examples\iis.ps1"
-$pdscript.PathType = "ScriptFromLocal"
+$pdscript.PathType = "FileFromLocal"
 $pdscript.VmNames= "projectnameVM01","projectnameVM02"
 $pdscript.PostDeploymentScriptName = "Install IIS n stuff"
 
