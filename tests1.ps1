@@ -70,9 +70,17 @@ $project.vms[1].VmName = "projectnameVM02"
 $project.Vms[1].VmSettings = New-Object AzureDeploymentEngine.VmSetting
 $project.Vms[1].VmSettings.CloudServiceName = "thtest-webtier01"
 
-
 $pdscript = New-Object AzureDeploymentEngine.PostDeploymentScript
 $pdscript.Order = 1
+$pdscript.Path = "D:\trond.hindenes\Downloads\chromecastinstaller.exe"
+$pdscript.PathType = "CopyFileFromLocal"
+$pdscript.VmNames= "projectnameVM01","projectnameVM02"
+$pdscript.PostDeploymentScriptName = "Copy some file"
+
+
+
+$pdscript = New-Object AzureDeploymentEngine.PostDeploymentScript
+$pdscript.Order = 2
 $pdscript.Path = "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\PostDeploymentScripts-examples\iis.ps1"
 $pdscript.PathType = "FileFromLocal"
 $pdscript.VmNames= "projectnameVM01","projectnameVM02"

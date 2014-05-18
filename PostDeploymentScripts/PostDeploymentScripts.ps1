@@ -2,7 +2,8 @@ Function Invoke-PostDeploymentScript
 {
     [CmdletBinding()]
     Param (
-        [AzureDeploymentEngine.PostDeploymentScript]$PostDeploymentScript
+        [AzureDeploymentEngine.PostDeploymentScript]$PostDeploymentScript,
+        $storageaccount
     )
 
     foreach ($vm in $PostDeploymentScript.vms)
@@ -59,6 +60,21 @@ Function Invoke-PostDeploymentScript
         $scriptpath = $PostDeploymentScript.Path
         $ScriptName = $PostDeploymentScript.PostDeploymentScriptName    
         $RebootOnCompletion = $PostDeploymentScript.RebootOnCompletion
+
+        if ($ScriptType -eq "CopyFileFromLocal")
+        {
+            if (!(test-path $scriptpath))
+            {
+                
+
+            }
+
+            #First, copy the file up. Then invoke script to have the VM download it
+            $FileCopyObject = copy-FileToAzure -path $scriptpath -storageaccountname $storageaccount
+
+            $scriptblockstring  = [system.io.file]::ReadAllText($scriptpath)
+            $scriptblock = $executioncontext.invokecommand.NewScriptBlock($scriptblockstring)
+        }
 
         if ($ScriptType -eq "FileFromLocal")
         {

@@ -5,7 +5,8 @@ Function Assert-azdePostDeploymentScript
         [AzureDeploymentEngine.Subscription]$Subscription,
         [AzureDeploymentEngine.Project]$Project,
         $AffinityGroupName,
-        $vms
+        $vms,
+        $storageaccount
     )
 
     #Get the post deployment scripts
@@ -102,7 +103,7 @@ Function Assert-azdePostDeploymentScript
                 $thispds.RebootOnCompletion = $pdscript.RebootOnCompletion
                 $thispds.CloudServiceName = $Deployedvm.ServiceName
                 
-                Invoke-PostDeploymentScript -PostDeploymentScript $thispds
+                Invoke-PostDeploymentScript -PostDeploymentScript $thispds -storageaccount $storageaccount
             }
 
             

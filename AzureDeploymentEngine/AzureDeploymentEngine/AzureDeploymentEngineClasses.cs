@@ -15,8 +15,10 @@ namespace AzureDeploymentEngine
         public string Domain { get; set; }
         public string SecurePassword { get; set; }
         public PSCredential PSCredential { get; set; }
-        public string CredentialType { get; set; }        
+        public CredentialType CredentialType { get; set; }        
     }
+
+    public enum CredentialType { ClearText }
 
     public class VmSetting
     {
@@ -66,7 +68,7 @@ namespace AzureDeploymentEngine
         //public bool WaitforAll { get; set; }
         public string RunAt { get; set; }
         public string Path { get; set; }
-        public string PathType { get; set; }
+        public PathType PathType { get; set; }
         public List<String> VmNames { get; set; }
         public List<AzureDeploymentEngine.Vm> VMs { get; set; }
         //public List<System.Array> VMs { get; set; }
@@ -75,6 +77,8 @@ namespace AzureDeploymentEngine
         public bool RebootOnCompletion { get; set; }
         public System.Collections.Hashtable Parameters { get; set; }
     }
+
+    public enum PathType { FileFromLocal, FileFromUrl, CopyFileFromLocal }
 
     public class artifact
     {

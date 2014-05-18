@@ -83,6 +83,6 @@ function Invoke-AzdeDeployment {
 
     #VMs
     $deployedVMs = Assert-azdeVirtualMachine -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup 
-    Assert-AzdePostDeploymentScript -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup -vms $deployedVMs
+    Assert-AzdePostDeploymentScript -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup -vms $deployedVMs -storageaccount $storageaccount[0]
 
 }
