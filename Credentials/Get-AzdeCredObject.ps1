@@ -16,6 +16,12 @@ function Get-AzdeCredobject
         #Construct object from cleartext
         $Strpassword = $credential.Password
         $Strusername = $credential.UserName
+
+        if ($credential.Domain)
+        {
+            $Strusername = $credential.Domain + "\" + $Strusername
+        }
+
         $securePassword = $Strpassword | ConvertTo-SecureString -AsPlainText -Force
         $credobject = new-object System.Management.Automation.PSCredential($Strusername,$securePassword)
 

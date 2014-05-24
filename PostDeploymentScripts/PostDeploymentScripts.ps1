@@ -3,7 +3,9 @@ Function Invoke-PostDeploymentScript
     [CmdletBinding()]
     Param (
         [AzureDeploymentEngine.PostDeploymentScript]$PostDeploymentScript,
-        $storageaccount
+        $storageaccount,
+        $artifactpath,
+        $addomainname
     )
 
     foreach ($vm in $PostDeploymentScript.vms)
@@ -34,6 +36,14 @@ Function Invoke-PostDeploymentScript
         {
             $VMWinRmCreds = $vm.VmSettings.LocalAdminCredential
         }
+        Else
+        {
+            #If domain creds, add the domain name
+            Write-enhancedVerbose -MinimumVerboseLevel 3 -Message "Setting domain $addomainname for the remoting credential"
+            $VMWinRmCreds.Domain = $addomainname
+
+        
+        }
 
         $Credobject = Get-AzdeCredObject -credential $VMWinRmCreds
 
@@ -61,9 +71,25 @@ Function Invoke-PostDeploymentScript
         $ScriptName = $PostDeploymentScript.PostDeploymentScriptName    
         $RebootOnCompletion = $PostDeploymentScript.RebootOnCompletion
 
+        #Resolve Scriptpath
+        if (!(test-path $scriptpath))
+            {
+                if (test-path "$artifactpath\$scriptpath")
+                {
+                    
+                    $scriptpath = "$artifactpath\$scriptpath"
+                    Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "using scriptpath $scriptpath"
+                }
+                Else
+                {
+                    Write-error "I couldnt find the script at $scriptpath"
+                }
+
+            }
+
         if ($ScriptType -eq "CopyFileFromLocal")
         {
-            if (!(test-path $scriptpath))
+            
             {
                 
                 throw "I couldnt find the file at path $scriptpath. Breaking"

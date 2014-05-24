@@ -9,7 +9,7 @@
 
     if (!($Path))
     {
-        $SavePath = Join-Path -Path (get-specialfolder "MyDocuments") -ChildPath "AzureDeploymentEngine\$($deployment.Deploymentname)"
+        $SavePath = Join-Path -Path $artifactpath -ChildPath "$($deployment.Deploymentname)"
         $savepath = Join-Path -Path $SavePath -ChildPath "$($deployment.Deploymentname).json"
          
     }
@@ -31,6 +31,7 @@
 
     #Todo: Better logic for not overwriting files
     $deployment | ConvertTo-Json -Depth 15 | Set-Content -Path $SavePath -Force
+    Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Writing deployment config to $savepath"
 }
 
 

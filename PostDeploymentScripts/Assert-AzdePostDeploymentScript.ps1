@@ -104,7 +104,10 @@ Function Assert-azdePostDeploymentScript
                 $thispds.RebootOnCompletion = $pdscript.RebootOnCompletion
                 $thispds.CloudServiceName = $Deployedvm.ServiceName
                 
-                Invoke-PostDeploymentScript -PostDeploymentScript $thispds -storageaccount $storageaccount
+                #Get the domain name for credentials
+                $Addomainname = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AdDomainName" -SettingsType "ProjectSettings" -TargetObject "Project"
+
+                Invoke-PostDeploymentScript -PostDeploymentScript $thispds -storageaccount $storageaccount -artifactpath "$ArtifactPath\$($Project.ProjectName)\scripts" -adDomainName $Addomainname
             }
 
             

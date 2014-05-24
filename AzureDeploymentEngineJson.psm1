@@ -15,3 +15,11 @@ gci $psscriptroot\helperfunctions\*.ps1 | % { . $_.FullName }
 gci $psscriptroot\AssertFunctions\*.ps1 | % { . $_.FullName }
 gci $psscriptroot\AzureBlobFunctions\*.ps1 | % { . $_.FullName }
 #Write-Output "This is the Azure Deployment Engine. Some code kindly borrowed from Aleksandar Nikolic"
+
+#Read ModuleSettings
+$modulesettingsJson = get-content "$psscriptroot\ModuleSettings.json" -raw
+$modulesettings = $modulesettingsJson | ConvertFrom-Json
+$ArtifactPath = $modulesettings.artifactPath
+
+$ArtifactPath = $ArtifactPath.replace("MyDocuments",(get-specialfolder "MyDocuments"))
+Write-Verbose "ArtifactPath set to $artifactpath"

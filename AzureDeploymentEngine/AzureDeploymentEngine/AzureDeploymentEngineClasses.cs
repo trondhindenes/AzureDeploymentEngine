@@ -18,19 +18,22 @@ namespace AzureDeploymentEngine
         public CredentialType CredentialType { get; set; }        
     }
 
-    public enum CredentialType { ClearText }
+    public enum CredentialType
+    {
+        ClearText 
+    }
 
     public class VmSetting
     {
         public string VmImage { get; set; }
         public string VmSize { get; set; }
         public string Subnet { get; set; }
-        public bool JoinDomain { get; set; }
-        public bool WaitforVmDeployment { get; set; }
-        public bool AlwaysRedeploy { get; set; }
-        public bool AlwaysRerunScripts { get; set; }
-        public bool MoveVmToCorrectSubnet { get; set; }
-        public bool AllowIpAddressChange { get; set; }
+        public bool? JoinDomain { get; set; }
+        public bool? WaitforVmDeployment { get; set; }
+        public bool? AlwaysRedeploy { get; set; }
+        public bool? AlwaysRerunScripts { get; set; }
+        public bool? MoveVmToCorrectSubnet { get; set; }
+        public bool? AllowIpAddressChange { get; set; }
         public AzureDeploymentEngine.Credential LocalAdminCredential { get; set; }
         public AzureDeploymentEngine.Credential DomainJoinCredential { get; set; }
         public int VmCount { get; set; }
@@ -65,25 +68,33 @@ namespace AzureDeploymentEngine
     {
         public string PostDeploymentScriptName { get; set; }
         public int Order { get; set; }
-        //public bool WaitforAll { get; set; }
+        //public bool? WaitforAll { get; set; }
         public string RunAt { get; set; }
         public string Path { get; set; }
-        public PathType PathType { get; set; }
+        public PathType? PathType { get; set; }
         public List<String> VmNames { get; set; }
         public List<AzureDeploymentEngine.Vm> VMs { get; set; }
         //public List<System.Array> VMs { get; set; }
         public AzureDeploymentEngine.Deployment Deployment { get; set; }
         public string CloudServiceName { get; set; }
-        public bool RebootOnCompletion { get; set; }
+        public bool? RebootOnCompletion { get; set; }
         public System.Collections.Hashtable Parameters { get; set; }
+        public bool? AlwaysRerun { get; set; }
     }
 
-    public enum PathType { FileFromLocal, FileFromUrl, CopyFileFromLocal }
+    public enum PathType
+    {
+        CopyFileFromLocal,
+        FileFromLocal,
+        FileFromUrl,
+    }
+
+
 
     public class artifact
     {
         public string LocalPath { get; set; }
-        public bool IsDirectory { get; set; }
+        public bool? IsDirectory { get; set; }
         public string TargetPath { get; set; }
         public List<String> VmNames { get; set; }
         public List<AzureDeploymentEngine.Vm> VMs { get; set; }
@@ -104,48 +115,50 @@ namespace AzureDeploymentEngine
         public string AffinityGroupName { get; set; }
         public string Location { get; set; }
         public Credential DomainAdminCredential { get; set; }
-        public bool DeployDomainControllersPerProject { get; set; }
+        public bool? DeployDomainControllersPerProject { get; set; }
         public string AdDomainName { get; set; }
         public string DomainControllerName { get; set; }
         public string DomainControllerSubnet { get; set; }
-        public bool SetDomainControllerForwarderAddress { get; set; }
+        public bool? SetDomainControllerForwarderAddress { get; set; }
         public string VmNamePrefix { get; set; }
         public string VmNameSuffix { get; set; }
         
         //not implemented:
-        public bool DontUseVirtualNetworks { get; set; }
+        public bool? DontUseVirtualNetworks { get; set; }
 
     }
 
     public class Project
     {
-        public string ProjectName { get; set; }
         public ProjectSetting ProjectSettings { get; set; }
         public CloudServiceSetting CloudServiceSettings { get; set; }
         public VmSetting VmSettings { get; set; }
-        public List<Vm> Vms { get; set; }
+        public string ProjectName { get; set; }
         public network Network { get; set; }
+        public List<Vm> Vms { get; set; }
         public List<PostDeploymentScript> PostDeploymentScripts { get; set; }
         
     }
 
     public class Subscription
     {
-        public string SubscriptionDisplayName { get; set; }
-        public string SubscriptionId { get; set; }
-        public List<Project> Projects { get; set; }
         public ProjectSetting ProjectSettings { get; set; }
         public CloudServiceSetting CloudServiceSettings { get; set; }
         public VmSetting VmSettings { get; set; }
+        public string SubscriptionDisplayName { get; set; }
+        public string SubscriptionId { get; set; }
+        public List<Project> Projects { get; set; }
+        
 
     }
 
     public class Deployment
     {
-        public string DeploymentName { get; set; }
-        public List<Subscription> Subscriptions { get; set; }
         public ProjectSetting ProjectSettings { get; set; }
         public CloudServiceSetting CloudServiceSettings { get; set; }
         public VmSetting VmSettings { get; set; }
+        public string DeploymentName { get; set; }
+        public List<Subscription> Subscriptions { get; set; }
+        
     }
 }
