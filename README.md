@@ -2,28 +2,12 @@
 
 Azure Deployment Engine (or AZdE) is a PowerShell module for automating the deployment of complex, multi-VM systems in Microsoft Azure.
 
-### What is this repository for? ###
+### What id does ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Construct a deployment using PowerShell functions or by editing json
+* Import/Export to Json
+* Deploy one or multiple VMs
+* Auto-deployment of domain controller VM
+* Run post-deployment scripts on one or several VMs to perform app installs
+* Copy files between local computer and Azure VMs using blob storage
 
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
