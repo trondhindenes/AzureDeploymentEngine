@@ -1,6 +1,6 @@
-# README #
+# Azure Deployment Engine #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Azure Deployment Engine (or AZdE) is a PowerShell module for automating the deployment of complex, multi-VM systems in Microsoft Azure.
 
 ### What is this repository for? ###
 
