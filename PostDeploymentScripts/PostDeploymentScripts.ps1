@@ -22,6 +22,12 @@ Function Invoke-PostDeploymentScript
                 $cloudservicename = $vm.VmSettings.CloudServiceName
         }
 
+        #Make sure we have a cloudservice somehow
+        if (!($cloudservicename))
+        {
+            Throw "We don't have a cloud service. not sure what happened. Not feeling so good."
+        }
+
         #Cloud service name may come in another format. More logic needed here
         $AzureVMObject = Get-AzureVM -Name $vm.VmName -ServiceName $cloudservicename
         $winRMUri = $AzureVMObject | Get-AzureWinRMUri

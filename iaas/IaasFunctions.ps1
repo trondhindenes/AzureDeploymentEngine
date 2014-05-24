@@ -152,9 +152,10 @@ function Invoke-AzDeVirtualMachine
         #VM exists
         Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Found existing vm $($vm.VmName). Skipping."
         $VMCheck = $VMsCheck | where {$_.Name -eq $vm.VmName}
-        if ($VMCheck.ServiceName -ne $cloudservice)
+        if ($VMCheck.ServiceName -ne $cloudserviceName)
         {
             #VM exists, but in different subnet
+            Write-Warning "VM $($VMCheck.Name) already exists, but in the wrong cloud service"
         } 
 
         if ($VMCheck.Status -ne "ReadyRole")
@@ -205,9 +206,12 @@ function Invoke-AzDeVirtualMachine
             $azurevm | Set-AzureSubnet -SubnetNames $vm.vmsettings.Subnet | out-null
         }
         Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($vm.VmName)"
-        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName ($vm.VmSettings.VnetName) -WaitForBoot -Verbose:$false
-        $azurevm | Add-Member -MemberType NoteProperty -Name "AlreadyExistingVm" -Value $true -Force
-        return $azurevm
+        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName ($vm.VmSettings.VnetName) -WaitForBoot -Verbose:$false | out-null
+        
+        
+        $ReturnObjectVM = get-azurevm -Verbose:$false -ServiceName $vm.vmsettings.cloudservicename -Name $vm.VmName
+        $ReturnObjectVM | Add-Member -MemberType NoteProperty -Name "AlreadyExistingVm" -Value $false -Force
+        return $ReturnObjectVM
     }
 
       
