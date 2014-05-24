@@ -60,7 +60,7 @@ $pdscript2.Order = 1
 $pdscript2.Path = "D:\trond.hindenes\Downloads\EwsManagedApi.msi"
 $pdscript2.PathType = "CopyFileFromLocal"
 $pdscript2.VmNames= "projectnameVM01","projectnameVM02"
-$pdscript2.PostDeploymentScriptName = "Copy orchestrator media"
+$pdscript2.PostDeploymentScriptName = "Copy EWS MSI"
 
 
 $project.PostDeploymentScripts = $pdscript2
@@ -83,7 +83,7 @@ $deployment | Save-AzdeDeploymentConfiguration -force -Verbose
 $VerbosePreference = "Continue"
 $verboselevel = 3
 
-$deployment = Import-AzdeDeploymentConfiguration -path "C:\Users\trohinde\Documents\AzureDeploymentEngine\smatest\smatest.json"
+$deployment = Import-AzdeDeploymentConfiguration -path "D:\trond.hindenes\Documents\AzureDeploymentEngine\trotest\trotest.json"
 
 Invoke-AzdeDeployment -Deployment $deployment
 
