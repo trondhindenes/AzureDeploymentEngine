@@ -14,7 +14,7 @@ Function copy-FileToAzure
     $context = New-AzureStorageContext -StorageAccountName $StorageAccountName -StorageAccountKey $storageAccountKey.Primary
     
     New-AzureStorageContainer $guid1 -Permission Off -Context $context | out-null
-    $result = Set-AzureStorageBlobContent -Blob $guid2 -Container $guid1 -File $path -Context $context -Force
+    $result = Set-AzureStorageBlobContent -Blob $guid2 -Container $guid1 -File $path -Context $context -Force -ClientTimeoutPerRequest 99999
     $sastoken = New-AzureStorageBlobSASToken  -Blob $guid2 -Container $guid1 -Context $context -Permission r
     
     #Construct URI for downloading the file

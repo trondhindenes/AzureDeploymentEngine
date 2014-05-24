@@ -1,7 +1,7 @@
 ﻿
 ipmo C:\Users\trohinde\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\AzureDeploymentEngineJson.psm1 -Force
 
-$deployment = New-AzdeDeployment -DeploymentName "smatest"
+$deployment = New-AzdeDeployment -DeploymentName "CrayonF"
 $subscription = new-AzdeSubscription -AzureSubscription (Get-AzureSubscription -SubscriptionName JHEMSDN -ErrorAction stop)
 $deployment | Add-AzdeSubscription -Subscription $subscription
 
@@ -17,7 +17,7 @@ $DomainAdminCredential.CredentialType = "ClearText"
 $DomainAdminCredential.UserName = "thadministrator"
 $DomainAdminCredential.Password = "Gulrik20161"
 
-$project = New-AzdeProject -ProjectName "smatest"
+$project = New-AzdeProject -ProjectName "CrayonF"
 
 $subscription | Add-AzdeProject -Project $project
 
@@ -26,7 +26,7 @@ $projectsettings.Location = "West Europe"
 $projectsettings.AffinityGroupName = "AG-projectname"
 $projectsettings.DeployDomainControllersPerProject = $true
 $projectsettings.DomainAdminCredential = $DomainAdminCredential
-$projectsettings.AdDomainName =  "smatest.local"
+$projectsettings.AdDomainName =  "Crayonf.local"
 
 #Storageaccount is 1-24 lowercase or numbers
 $projectsettings.ProjectStorageAccountName = "projectnamestorage"
@@ -53,28 +53,11 @@ $project.vms[0].VmSettings.AlwaysRerunScripts = $true
 $project.vms.Add((new-object AzureDeploymentEngine.Vm))
 $project.vms[1].VmName = "projectnameVM02"
 
-
-
-$pdscript2 = New-Object AzureDeploymentEngine.PostDeploymentScript
-$pdscript2.Order = 1
-$pdscript2.Path = "C:\Users\trohinde\Downloads\RDCMan.msi"
-$pdscript2.PathType = "CopyFileFromLocal"
-$pdscript2.VmNames= "projectnameVM01","projectnameVM01"
-$pdscript2.PostDeploymentScriptName = "Copy orchestrator media"
-
-
-$project.PostDeploymentScripts = $pdscript2
-
-
-
-
 #Save the config
 $deployment | Save-AzdeDeploymentConfiguration -force -Verbose
 $VerbosePreference = "Continue"
 $verboselevel = 3
 
-$deployment = Import-AzdeDeploymentConfiguration -path "C:\Users\trohinde\Documents\AzureDeploymentEngine\smatest\smatest.json"
+$deployment = Import-AzdeDeploymentConfiguration -Path "C:\Users\trohinde\Documents\AzureDeploymentEngine\CrayonF\CrayonF.json"
 
 Invoke-AzdeDeployment -Deployment $deployment
-
-$deployment2 = Import-AzdeDeploymentConfiguration -Path "D:\trond.hindenes\Documents\AzureDeploymentEngine\TestDepl\TestDepl.json"

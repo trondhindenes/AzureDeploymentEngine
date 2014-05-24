@@ -66,12 +66,13 @@ Function Invoke-PostDeploymentScript
             if (!(test-path $scriptpath))
             {
                 
-
+                throw "I couldnt find the file at path $scriptpath. Breaking"
             }
 
+            
             #First, copy the file up. Then invoke script to have the VM download it
             $FileCopyObject = copy-FileToAzure -path $scriptpath -storageaccountname $storageaccount
-            $copyscript = "D:\trond.hindenes\Documents\Scripts\Powershell\ModuleDev\AzureDeploymentEngineJson\PostDeploymentScripts-content\DownloadFileFromBlob.ps1"
+            $copyscript = "$thismodulepath\PostDeploymentScripts-content\DownloadFileFromBlob.ps1"
 
             $scriptblockstring  = [system.io.file]::ReadAllText($copyscript)
             $scriptblock = $executioncontext.invokecommand.NewScriptBlock($scriptblockstring)

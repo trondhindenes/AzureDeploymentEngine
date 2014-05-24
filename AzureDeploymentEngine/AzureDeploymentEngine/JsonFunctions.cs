@@ -11,13 +11,25 @@ namespace AzureDeploymentEngine
     {
         public AzureDeploymentEngine.Deployment ConvertToDeploymentFromJson(string JsonString)
         {
-            AzureDeploymentEngine.Deployment ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Deployment>(JsonString);
+            JsonSerializerSettings jsonSettings = new JsonSerializerSettings();
+            jsonSettings.NullValueHandling = NullValueHandling.Ignore;
+            AzureDeploymentEngine.Deployment ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Deployment>(JsonString, jsonSettings);
                 return ConvertedObject;
+        }
+
+        public string ConvertFromDeploymentToJson(AzureDeploymentEngine.Deployment DeploymentObj)
+        {
+            JsonSerializerSettings jsonSettings = new JsonSerializerSettings();
+            jsonSettings.NullValueHandling = NullValueHandling.Ignore;
+            string converted = JsonConvert.SerializeObject(DeploymentObj);
+            return converted;
         }
 
         public AzureDeploymentEngine.Vm ConvertToVmFromJson(string JsonString)
         {
-            AzureDeploymentEngine.Vm ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Vm>(JsonString);
+            JsonSerializerSettings jsonSettings = new JsonSerializerSettings();
+            jsonSettings.NullValueHandling = NullValueHandling.Ignore;
+            AzureDeploymentEngine.Vm ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Vm>(JsonString, jsonSettings);
             return ConvertedObject;
         }
     }

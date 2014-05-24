@@ -9,8 +9,8 @@
 
     if (!($Path))
     {
-        $SavePath = Join-Path -Path (get-specialfolder "MyDocuments") -ChildPath "AzureDeploymentEngine\$($deployment.DeploymentFriendlyName)"
-        $savepath = Join-Path -Path $SavePath -ChildPath "$($deployment.DeploymentFriendlyName).json"
+        $SavePath = Join-Path -Path (get-specialfolder "MyDocuments") -ChildPath "AzureDeploymentEngine\$($deployment.Deploymentname)"
+        $savepath = Join-Path -Path $SavePath -ChildPath "$($deployment.Deploymentname).json"
          
     }
     Else

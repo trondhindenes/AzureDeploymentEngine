@@ -1,3 +1,5 @@
+$thismodulepath = $psscriptroot
+
 add-type -Path "$psscriptroot\Dlls\newtonsoft.json.dll"
 add-type -Path "$psscriptroot\Dlls\AzureDeploymentEngine.dll"
 gci $psscriptroot\Nikolic-AzureHelpers\*.ps1 | % { . $_.FullName }

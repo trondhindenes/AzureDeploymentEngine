@@ -159,7 +159,7 @@ function Invoke-AzDeVirtualMachine
 
         if ($VMCheck.Status -ne "ReadyRole")
         {
-            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Existing vm $($vm.VmName) is shutdown. Booting."
+            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Existing vm $($vm.VmName) seems to be shutdown. Booting. This might take a few minutes."
             Start-AzdeAzureVM -vm $VMCheck -wait $true
 
         }
@@ -229,7 +229,7 @@ function Start-AzdeAzureVM
         write-error "I was told to start VM $($vm.Name) in cloudservice $($vm.servicename), but I couldn't find it."
     }
 
-    $vm | Start-AzureVM
+    $vm | Start-AzureVM -Verbose:$false
     
         #Attempt connection
         $retries = 0
@@ -239,7 +239,7 @@ function Start-AzdeAzureVM
                 start-sleep -Seconds 10
             }
             
-            $vm = $vm | get-azurevm
+            $vm = $vm | get-azurevm -Verbose:$false
 
             $retries ++
         }
