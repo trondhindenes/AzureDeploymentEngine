@@ -14,3 +14,5 @@ Azure Deployment Engine (or AZdE) is a PowerShell module for automating the depl
 ### How to install ###
 * Download, unzip and stick it in one of your PowerShell module folders
 * The folder "AzureDeploymentEngine" inside the zip containing the Visual Studio project can be deleted, it's not required for using the module
+
+### How to use ###
