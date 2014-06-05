@@ -96,11 +96,12 @@ Function Invoke-PostDeploymentScript
         if ($ScriptType -eq "CopyFileFromLocal")
         {
             
+			<#
             {
                 
                 throw "I couldnt find the file at path $scriptpath. Breaking"
             }
-
+			#>
             
             #First, copy the file up. Then invoke script to have the VM download it
             $FileCopyObject = copy-FileToAzure -path $scriptpath -storageaccountname $storageaccount
