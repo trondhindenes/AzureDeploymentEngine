@@ -29,6 +29,7 @@ namespace AzureDeploymentEngine
         public string VmSize { get; set; }
         public string Subnet { get; set; }
         public bool? JoinDomain { get; set; }
+        public bool? StartIfStopped { get; set; }
         public bool? WaitforVmDeployment { get; set; }
         public bool? AlwaysRedeploy { get; set; }
         public bool? AlwaysRerunScripts { get; set; }

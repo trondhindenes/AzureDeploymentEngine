@@ -160,8 +160,16 @@ function Invoke-AzDeVirtualMachine
 
         if ($VMCheck.Status -ne "ReadyRole")
         {
-            Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Existing vm $($vm.VmName) seems to be shutdown. Booting. This might take a few minutes."
-            Start-AzdeAzureVM -vm $VMCheck -wait $true
+            if ($vm.vmsettings.StartIfStopped -eq $true)
+            {
+                Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Existing vm $($vm.VmName) seems to be shutdown. Booting. This might take a few minutes."
+                Start-AzdeAzureVM -vm $VMCheck -wait $true
+            }
+            Else
+            {
+                Write-enhancedVerbose -MinimumVerboseLevel 3 -Message "Existing vm $($vm.VmName) seems to be shutdown. Leaving it according to settings"
+            }
+            
 
         }
         

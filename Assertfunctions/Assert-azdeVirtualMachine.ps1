@@ -64,10 +64,20 @@ Function Assert-azdeVirtualMachine
         }
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Setting domainjoin attribute to $($vm.VmSettings.JoinDomain)"
         
+        if (!($vm.VmSettings.StartIfStopped))
+        {
+            $vm.VmSettings.StartIfStopped = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "StartIfStopped" -SettingsType "VmSettings" -TargetObject "Project"
+        
+        }
+        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Setting domainjoin attribute to $($vm.VmSettings.JoinDomain)"
+        
+
         if (!($vm.VmSettings.VMSize))
         {
             $vm.VmSettings.VMSize = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "VMSize" -SettingsType "VmSettings" -TargetObject "Project"
         }
+
+
 
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Setting vmsize $($vm.VmSettings.VMSize)"
 
