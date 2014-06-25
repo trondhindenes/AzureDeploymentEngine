@@ -197,7 +197,7 @@ function Invoke-AzDeVirtualMachine
         
         if ($vm.VmSettings.DataDiskSize -gt 0)
         {
-            $datadisksizeInGb = ($vm.VmSettings.DataDiskSize) / 1GB
+            $datadisksizeInGb = ($vm.VmSettings.DataDiskSize) # / 1GB
             $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisksizeInGb -DiskLabel 'DataDrive' -LUN 0 | out-null
         }
 
