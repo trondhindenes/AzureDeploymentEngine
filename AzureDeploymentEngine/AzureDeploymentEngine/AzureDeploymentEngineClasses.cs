@@ -31,6 +31,7 @@ namespace AzureDeploymentEngine
         public bool? JoinDomain { get; set; }
         public bool? StartIfStopped { get; set; }
         public bool? WaitforVmDeployment { get; set; }
+        public bool? ConfigureStaticVnetIPAddress { get; set; }
         public bool? AlwaysRedeploy { get; set; }
         public bool? AlwaysRerunScripts { get; set; }
         public bool? MoveVmToCorrectSubnet { get; set; }
