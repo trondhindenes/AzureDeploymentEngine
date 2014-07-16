@@ -85,6 +85,8 @@ Function Assert-AzdeDomainController
 
     $domaincontroller.VmSettings.LocalAdminCredential = $dccredential
 
+    $DomainController.VmSettings.StartIfStopped = $true
+
 
     $DCvm = Invoke-AzDeVirtualMachine -vm $DomainController -affinityGroupName $affinityGroupName
     
