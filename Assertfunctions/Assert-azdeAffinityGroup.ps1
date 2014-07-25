@@ -1,16 +1,14 @@
 Function Assert-azdeAffinityGroup
 {
     Param (
-        [AzureDeploymentEngine.Deployment]$Deployment,
-        [AzureDeploymentEngine.Subscription]$Subscription,
         [AzureDeploymentEngine.Project]$Project
     )
 
 
     $ProjectName = $Project.ProjectName
-    $AGName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupName" -SettingsType "ProjectSettings" -TargetObject "Project"
-    $AGSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupSuffix" -SettingsType "ProjectSettings" -TargetObject "Project"
-    $Location = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "Location" -SettingsType "ProjectSettings" -TargetObject "Project"
+    $AGName = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupName" -SettingsType "ProjectSettings" -TargetObject "Project"
+    $AGSuffix = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AffinityGroupSuffix" -SettingsType "ProjectSettings" -TargetObject "Project"
+    $Location = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "Location" -SettingsType "ProjectSettings" -TargetObject "Project"
 
     if (!$AGName)
     {
@@ -28,7 +26,7 @@ Function Assert-azdeAffinityGroup
 
     $ActualAffinityGroupName = $AGName.replace("projectname",($Project.ProjectName))
     $ActualAffinityGroupName = $ActualAffinityGroupName.Replace(" ","")
-    Enable-AzdeAzureSubscription -SubscriptionId ($Subscription.SubscriptionId)
+    Enable-AzdeAzureSubscription -SubscriptionId ($Project.Subscription.SubscriptionId)
 
     Invoke-AffinityGroup -AffinityGroupName $ActualAffinityGroupName -Location $Location -SubscriptionId ($Subscription.SubscriptionId)
     return $ActualAffinityGroupName

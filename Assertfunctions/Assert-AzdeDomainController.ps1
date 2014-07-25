@@ -1,8 +1,6 @@
 Function Assert-AzdeDomainController
 {
     Param (
-        [AzureDeploymentEngine.Deployment]$Deployment,
-        [AzureDeploymentEngine.Subscription]$Subscription,
         [AzureDeploymentEngine.Project]$Project,
         $AffinityGroupName
     )
@@ -14,12 +12,12 @@ Function Assert-AzdeDomainController
     $subnet = $network.Subnets[0]
 
     #Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Storage Account Name is: $ActualStorageAccountName"
-    Enable-AzdeAzureSubscription -SubscriptionId ($Subscription.SubscriptionId)
+    Enable-AzdeAzureSubscription -SubscriptionId ($Project.Subscription.SubscriptionId)
 
     #Get the domain controller settings
     
-    $DeployDomainControllersPerProject = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DeployDomainControllersPerProject" -SettingsType "ProjectSettings" -TargetObject "Project"
-    $vmimagename = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "VmImage" -SettingsType "VmSettings" -TargetObject "Project"
+    $DeployDomainControllersPerProject = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DeployDomainControllersPerProject" -SettingsType "ProjectSettings" -TargetObject "Project"
+    $vmimagename = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "VmImage" -SettingsType "VmSettings" -TargetObject "Project"
     if ($DeployDomainControllersPerProject)
     {
         Write-Verbose "Will deploy domain controller(s) for project"
@@ -66,7 +64,7 @@ Function Assert-AzdeDomainController
     
 
     #Figure out the cloud service for the vm
-    $CloudServiceName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
+    $CloudServiceName = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
     
     if (!$CloudServiceName)
     {
@@ -76,7 +74,7 @@ Function Assert-AzdeDomainController
     
     #$CloudServicePrefix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServicePrefix" -SettingsType "CloudServiceSettings" -TargetObject "Project"
     #$CloudServiceSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceSuffix" -SettingsType "CloudServiceSettings" -TargetObject "Project"
-    [AzureDeploymentEngine.Credential]$DcCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+    [AzureDeploymentEngine.Credential]$DcCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
  
     
     $cloudservicename = $cloudservicename.replace(" ","")

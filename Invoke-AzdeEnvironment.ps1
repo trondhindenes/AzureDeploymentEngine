@@ -3,15 +3,13 @@ $moduleFilePath =  $invocation.MyCommand.Path
 $modulefolderpath = $moduleFilePath | split-path
 
 
-function Invoke-AzdeDeployment {
+function Invoke-AzdeProject {
     Param (
-        [AzureDeploymentEngine.Deployment]$Deployment,
-        $subscription,
-        $Project,
+        [AzureDeploymentEngine.Project]$Project,
         [switch]$SkipDomainController
     )
 
-    Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Command: Invoke-AzdeDeployment"
+    Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Command: Invoke-AzdeProject"
 
     #Execution logic
     #1.verify required info
@@ -20,42 +18,16 @@ function Invoke-AzdeDeployment {
     #4. Deploy DC/VMs
     #5. Execute postinstall-scripts
 
-    if ($Deployment.Subscriptions.count -eq $null)
-    {
-        Write-Error "The specified deployment doesnt contain any subscriptions"
-    }
-    Elseif (($Deployment.Subscriptions.count -gt 1) -and (!($subscription)))
-    {
-        Write-Error "
-        This deployment contains more than one subscription. Specify which one either by name or object"
-    }
-    Elseif ($subscription)
-    {
-        if ($subscription.GetType().Name -eq "String")
-        {
-            #Subscription specified as string. Check that deployment contains it
-        }
-        Elseif ($subscription.GetType().Name -eq "AzureDeploymentEngine.Subscription")
-        {
-            #SUbscription specified as object
-        }
+    $subscription = $Project.Subscription
 
-    }
-    Else
+    if (!($subscription))
     {
-        $subscription = $Deployment.Subscriptions[0]
+        throw "Subscription not specified"
     }
 
     Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "      Current Subscription is: $($subscription.SubscriptionDisplayName)"
     #TODO: At this point, make sure we have a subscription
 
-    if ((!$project) -and ($subscription.Projects.count -eq 1))
-    {
-        #ONly one project in subscription, use that one
-        $project = $subscription.Projects[0]
-    }
-
-    
     Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "      Current Project is: $($project.ProjectName)"
 
 
@@ -74,7 +46,7 @@ function Invoke-AzdeDeployment {
     #DC
     if (!($SkipDomainController))
     {
-        Assert-AzdeDomainController -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup
+        Assert-AzdeDomainController -subscription $subscription -project $project -AffinityGroupName $AffinityGroup
     }
     Else
     {
@@ -82,7 +54,7 @@ function Invoke-AzdeDeployment {
     }
 
     #VMs
-    $deployedVMs = Assert-azdeVirtualMachine -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup 
-    Assert-AzdePostDeploymentScript -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup -vms $deployedVMs -storageaccount $storageaccount[0]
+    $deployedVMs = Assert-azdeVirtualMachine -project $project -AffinityGroupName $AffinityGroup 
+    Assert-AzdePostDeploymentScript -project $project -AffinityGroupName $AffinityGroup -vms $deployedVMs -storageaccount $storageaccount[0]
 
 }
