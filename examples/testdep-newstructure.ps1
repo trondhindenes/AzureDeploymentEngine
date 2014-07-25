@@ -9,7 +9,7 @@ $pjsettings.DeployDomainControllersPerProject = $true
 $pjsettings.DomainAdminCredential = new-object AzureDeploymentEngine.Credential
 $pjsettings.DomainAdminCredential.CredentialType = [AzureDeploymentEngine.CredentialType]::ClearText
 $pjsettings.DomainAdminCredential.UserName = "thadministrator"
-$pjsettings.DomainAdminCredential.Password = "dfgLKJ234.K"
+$pjsettings.DomainAdminCredential.Password = "Password123456"
 
 
 $project.VmSettings = new-object AzureDeploymentEngine.VmSetting
@@ -18,6 +18,7 @@ $pjvms.VmImage = "Windows Server 2012 R2 Datacenter"
 $pjvms.VmSize = "Small"
 $pjvms.JoinDomain = $true
 $pjvms.WaitforVmDeployment = $true
+$pjvms.startifstopped = $true
 
 $project.CloudServiceSettings = new-object AzureDeploymentEngine.CloudServiceSetting
 $pjcs = $project.CloudServiceSettings

@@ -1,8 +1,6 @@
 Function Assert-azdeVirtualMachine
 {
     Param (
-        [AzureDeploymentEngine.Deployment]$Deployment,
-        [AzureDeploymentEngine.Subscription]$Subscription,
         [AzureDeploymentEngine.Project]$Project,
         $AffinityGroupName
     )
@@ -13,7 +11,7 @@ Function Assert-azdeVirtualMachine
     $subnet = $network.Subnets[0]
 
     #Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Storage Account Name is: $ActualStorageAccountName"
-    Enable-AzdeAzureSubscription -SubscriptionId ($Subscription.SubscriptionId)
+    Enable-AzdeAzureSubscription -SubscriptionId ($project.Subscription.SubscriptionId)
 
     $deployvms = @()
 
@@ -35,21 +33,21 @@ Function Assert-azdeVirtualMachine
         Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $vmname"
         if (!($vm.VmSettings.VmImage))
         {
-            $vm.VmSettings.VmImage = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "VmImage" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.VmImage = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "VmImage" -SettingsType "VmSettings" -TargetObject "Project"
             Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Deploying vm from image $($vm.VmSettings.vmimage)"
 
         }
         
         if (!($vm.VmSettings.CloudServiceName))
         {
-            $vm.VmSettings.CloudServiceName = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
+            $vm.VmSettings.CloudServiceName = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
         }
         $vm.VmSettings.CloudServiceName = $vm.VmSettings.CloudServiceName.replace("projectname",$ProjectName)
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Deploying vm into cloud service $($vm.VmSettings.CloudServiceName)"
 
         if (!($vm.VmSettings.Subnet))
         {
-            $vm.VmSettings.Subnet = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "Subnet" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.Subnet = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "Subnet" -SettingsType "VmSettings" -TargetObject "Project"
         }
         if (!($vm.VmSettings.Subnet))
         {
@@ -59,14 +57,14 @@ Function Assert-azdeVirtualMachine
 
         if (!($vm.VmSettings.JoinDomain))
         {
-            $vm.VmSettings.JoinDomain = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "JoinDomain" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.JoinDomain = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "JoinDomain" -SettingsType "VmSettings" -TargetObject "Project"
         
         }
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Setting domainjoin attribute to $($vm.VmSettings.JoinDomain)"
         
         if (!($vm.VmSettings.StartIfStopped))
         {
-            $vm.VmSettings.StartIfStopped = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "StartIfStopped" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.StartIfStopped = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "StartIfStopped" -SettingsType "VmSettings" -TargetObject "Project"
         
         }
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Setting domainjoin attribute to $($vm.VmSettings.JoinDomain)"
@@ -74,7 +72,7 @@ Function Assert-azdeVirtualMachine
 
         if (!($vm.VmSettings.VMSize))
         {
-            $vm.VmSettings.VMSize = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "VMSize" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.VMSize = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "VMSize" -SettingsType "VmSettings" -TargetObject "Project"
         }
 
 
@@ -85,7 +83,7 @@ Function Assert-azdeVirtualMachine
         
         if (!($vm.VmSettings.WaitforVmDeployment))
         {
-            $vm.VmSettings.WaitforVmDeployment = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "WaitforVmDeployment" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.WaitforVmDeployment = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "WaitforVmDeployment" -SettingsType "VmSettings" -TargetObject "Project"
         }
         #If nothing is specified, we will wait for VM deployment
         if (!($vm.VmSettings.WaitforVmDeployment))
@@ -98,7 +96,7 @@ Function Assert-azdeVirtualMachine
 
         if (!($vm.VmSettings.AlwaysRedeploy))
         {
-            $vm.VmSettings.AlwaysRedeploy = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AlwaysRedeploy" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.AlwaysRedeploy = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AlwaysRedeploy" -SettingsType "VmSettings" -TargetObject "Project"
         }
         #If nothing is specified, wwe will never redeploy
         if (!($vm.VmSettings.AlwaysRedeploy))
@@ -110,23 +108,23 @@ Function Assert-azdeVirtualMachine
 
         if (!($vm.VmSettings.DomainJoinCredential))
         {
-            $vm.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainJoinCredential" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainJoinCredential" -SettingsType "VmSettings" -TargetObject "Project"
         }
 
         if (!($vm.VmSettings.LocalAdminCredential))
         {
-            $vm.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "LocalAdminCredential" -SettingsType "VmSettings" -TargetObject "Project"
+            $vm.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "LocalAdminCredential" -SettingsType "VmSettings" -TargetObject "Project"
         }
 
         #If credentials are still empty, use the project's domain admin credentials
         if (!($vm.VmSettings.DomainJoinCredential))
         {
-            $vm.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+            $vm.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
         }
 
         if (!($vm.VmSettings.LocalAdminCredential))
         {
-            $vm.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+            $vm.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
         }
 
         $vmDeploy = Invoke-AzDeVirtualMachine -vm $vm -affinityGroupName $affinityGroupName

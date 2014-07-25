@@ -1,8 +1,6 @@
 Function Assert-azdePostDeploymentScript
 {
     Param (
-        [AzureDeploymentEngine.Deployment]$Deployment,
-        [AzureDeploymentEngine.Subscription]$Subscription,
         [AzureDeploymentEngine.Project]$Project,
         $AffinityGroupName,
         $vms,
@@ -41,23 +39,23 @@ Function Assert-azdePostDeploymentScript
             #If credentials arent set on the vm, get them from cascading project settings
             if (!($vmobject.VmSettings.DomainJoinCredential))
             {
-                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainJoinCredential" -SettingsType "VmSettings" -TargetObject "Project"
+                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainJoinCredential" -SettingsType "VmSettings" -TargetObject "Project"
             }
 
             if (!($vmobject.VmSettings.LocalAdminCredential))
             {
-                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "LocalAdminCredential" -SettingsType "VmSettings" -TargetObject "Project"
+                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "LocalAdminCredential" -SettingsType "VmSettings" -TargetObject "Project"
             }
 
             #If credentials are still empty, use the project's domain admin credentials
             if (!($vmobject.VmSettings.DomainJoinCredential))
             {
-                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
             }
 
             if (!($vmobject.VmSettings.LocalAdminCredential))
             {
-                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
             }
 
 
@@ -65,7 +63,7 @@ Function Assert-azdePostDeploymentScript
             #If this setting isnt set (not true, not false), look in cascading settings
             if ($scriptReRunsetting -eq $null)
             {
-                $scriptReRunsetting = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AlwaysRerunScripts" -SettingsType "VmSettings" -TargetObject "Project"
+                $scriptReRunsetting = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AlwaysRerunScripts" -SettingsType "VmSettings" -TargetObject "Project"
                 if ($scriptReRunsetting -eq $null)
                 {
                     $scriptReRunsetting = $false
@@ -105,7 +103,7 @@ Function Assert-azdePostDeploymentScript
                 $thispds.CloudServiceName = $Deployedvm.ServiceName
                 
                 #Get the domain name for credentials
-                $Addomainname = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AdDomainName" -SettingsType "ProjectSettings" -TargetObject "Project"
+                $Addomainname = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AdDomainName" -SettingsType "ProjectSettings" -TargetObject "Project"
 
                 Invoke-PostDeploymentScript -PostDeploymentScript $thispds -storageaccount $storageaccount -artifactpath "$ArtifactPath\$($Project.ProjectName)\scripts" -adDomainName $Addomainname
             }
