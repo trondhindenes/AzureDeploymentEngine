@@ -21,10 +21,26 @@ Function Assert-azdePostDeploymentScript
         $pdscriptvms = $pdscript.VmNames
         foreach ($pdscriptvm in $pdscriptvms)
         {
-            #If the VMs were already existing, check if the script is set to always rerun    
-            $vmrealname = $pdscriptvm.replace("projectname",$project.ProjectName)
+            #If the VMs were already existing, check if the script is set to always rerun 
             
-            $vm = $Project.Vms | where {($_.VmName.replace("projectname",$project.ProjectName)) -eq $vmrealname}
+            #Case-insensitive string replace
+            $vmrealname = [AzureDeploymentEngine.StringExtensions]::Replace($pdscriptvm,"projectname",$projectname,"OrdinalIgnoreCase")
+            
+            $vm = $null
+            foreach ($LookupVm in $project.vms)
+            {
+                $LookupVmName = $LookupVm.VmName
+                $RealLookupVmName = [AzureDeploymentEngine.StringExtensions]::Replace($pdscriptvm,"projectname",$projectname,"OrdinalIgnoreCase")
+                if ($RealLookupVmName -eq $vmrealname)
+                {
+                    $vm = $LookupVm
+                }
+
+            }
+
+            #Replaced with the code above for case-insensitivity
+            #$vm = $Project.Vms | where {($_.VmName.replace("projectname",$project.ProjectName)) -eq $vmrealname}
+            
             $jsonvm = $vm | ConvertTo-Json -Depth 10
             $vmobject = Import-AzdeVMConfiguration -string $jsonvm
             $vmobject.VmName = $vmrealname

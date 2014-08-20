@@ -47,7 +47,8 @@ Function Assert-AzdeDomainController
         $DomainControllerName = $ProjectName + "DC"
     }
     
-    $DomainController.VmName = $DomainControllerName.replace("projectname",$projectname)
+    #Case-insensitive string replace
+    $DomainController.VmName = [AzureDeploymentEngine.StringExtensions]::Replace($DomainControllerName,"projectname",$projectname,"OrdinalIgnoreCase")
     $DomainController.VmName = $DomainController.VmName.Replace(" ","")
 
     Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Domain controller name: $($DomainController.VmName)"

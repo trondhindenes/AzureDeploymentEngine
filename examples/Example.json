@@ -1,26 +1,22 @@
 {
-    "DeploymentName":  "TestDepl",
-    "Subscriptions":  [
-                          {
-                              "SubscriptionDisplayName":  "JHEMSDN",
-                              "SubscriptionId":  "b20ffc13-1d64-4ae1-8735-8e24dba2e5dd",
-                              "Projects":  [
-                                               {
-                                                   "ProjectName":  "thtest1",
-                                                   "ProjectSettings":  {
+    "Subscription":  {
+                         "SubscriptionDisplayName":  "Visual Studio Premium with MSDN",
+                         "SubscriptionId":  "that long number thingy"
+                     },
+    "ProjectSettings":  {
                                                                            "ProjectStorageAccountName":  "projectnamestorage",
                                                                            "AffinityGroupName":  "AG-projectname",
                                                                            "Location":  "West Europe",
                                                                            "DomainAdminCredential":  {
                                                                                                          "UserName":  "thadministrator",
-                                                                                                         "Password":  "Password12345",
+                                                                                                         "Password":  "e6PHLue6PHLu",
                                                                                                          "Domain":  null,
                                                                                                          "SecurePassword":  null,
                                                                                                          "PSCredential":  null,
-                                                                                                         "CredentialType":  "ClearText"
+                                                                                                         "CredentialType":  0
                                                                                                      },
                                                                            "DeployDomainControllersPerProject":  true,
-                                                                           "AdDomainName":  "ad.thlab.local",
+                                                                           "AdDomainName":  "trondcloud.hindenes.com",
                                                                            "DomainControllerName":  null,
                                                                            "DomainControllerSubnet":  null,
                                                                            "SetDomainControllerForwarderAddress":  false,
@@ -28,56 +24,6 @@
                                                                            "VmNameSuffix":  null,
                                                                            "DontUseVirtualNetworks":  false
                                                                        },
-                                                   "CloudServiceSettings":  null,
-                                                   "VmSettings":  null,
-                                                   "Vms":  [
-                                                               {
-                                                                   "VmName":  "projectnameVM01",
-                                                                   "IpAddress":  null,
-                                                                   "VmSettings":  null
-                                                               },
-                                                               {
-                                                                   "VmName":  "projectnameVM02",
-                                                                   "IpAddress":  null,
-                                                                   "VmSettings":  null
-                                                               }
-                                                           ],
-                                                   "Network":  {
-                                                                   "NetworkName":  "VNET1",
-                                                                   "AddressPrefix":  "10.10.0.0/16",
-                                                                   "Subnets":  [
-                                                                                   {
-                                                                                       "subnetName":  "sn-10.10.50.0",
-                                                                                       "SubnetCidr":  "10.10.50.0/24"
-                                                                                   }
-                                                                               ]
-                                                               },
-                                                   "PostDeploymentScripts":  [
-                                                                                 {
-                                                                                     "PostDeploymentScriptName":  "Install IIS n stuff",
-                                                                                     "Order":  1,
-                                                                                     "RunAt":  null,
-                                                                                     "Path":  "D:\\trond.hindenes\\Documents\\Scripts\\Powershell\\ModuleDev\\AzureDeploymentEngineJson\\PostDeploymentScripts-examples\\iis.ps1",
-                                                                                     "PathType":  "FileFromLocal",
-                                                                                     "VmNames":  [
-                                                                                                     "projectnameVM01",
-                                                                                                     "projectnameVM02"
-                                                                                                 ],
-                                                                                     "VMs":  null,
-                                                                                     "Deployment":  null,
-                                                                                     "CloudServiceName":  null,
-                                                                                     "RebootOnCompletion":  false,
-                                                                                     "Parameters":  null
-                                                                                 }
-                                                                             ]
-                                               }
-                                           ],
-                              "ProjectSettings":  null,
-                              "CloudServiceSettings":  null,
-                              "VmSettings":  null
-                          }
-                      ],
-    "ProjectSettings":  null,
     "CloudServiceSettings":  {
                                  "CloudServiceName":  "projectname-cs",
                                  "CloudServiceVmPlacement":  null
@@ -87,7 +33,9 @@
                        "VmSize":  "Small",
                        "Subnet":  null,
                        "JoinDomain":  true,
+                       "StartIfStopped":  null,
                        "WaitforVmDeployment":  false,
+                       "ConfigureStaticVnetIPAddress":  null,
                        "AlwaysRedeploy":  false,
                        "AlwaysRerunScripts":  true,
                        "MoveVmToCorrectSubnet":  false,
@@ -98,5 +46,70 @@
                        "CloudServiceName":  null,
                        "VnetName":  null,
                        "DataDiskSize":  0
-                   }
+                   },
+    "ProjectName":  "TrondCloud",
+    "Network":  {
+                    "NetworkName":  "TrondCloudNet",
+                    "AddressPrefix":  "10.10.0.0/16",
+                    "Subnets":  [
+                                    {
+                                        "subnetName":  "sn-10.10.50.0",
+                                        "SubnetCidr":  "10.10.50.0/24"
+                                    }
+                                ]
+                },
+    "Vms":  [
+                {
+                    "VmName":  "projectnameVM01",
+                    "IpAddress":  null,
+                    "VmSettings":  {
+                                       "VmImage":  null,
+                                       "VmSize":  null,
+                                       "Subnet":  null,
+                                       "JoinDomain":  false,
+                                       "StartIfStopped":  null,
+                                       "WaitforVmDeployment":  false,
+                                       "ConfigureStaticVnetIPAddress":  null,
+                                       "AlwaysRedeploy":  false,
+                                       "AlwaysRerunScripts":  true,
+                                       "MoveVmToCorrectSubnet":  false,
+                                       "AllowIpAddressChange":  false,
+                                       "LocalAdminCredential":  null,
+                                       "DomainJoinCredential":  null,
+                                       "VmCount":  0,
+                                       "CloudServiceName":  null,
+                                       "VnetName":  null,
+                                       "DataDiskSize":  0
+                                   }
+                },
+                {
+                    "VmName":  "ProjectName-CI",
+                    "IpAddress":  null,
+                    "VmSettings":  {
+                                       "VmImage":  null,
+                                       "VmSize":  "Medium",
+                                       "Subnet":  null,
+                                       "JoinDomain":  false,
+                                       "StartIfStopped":  null,
+                                       "WaitforVmDeployment":  false,
+                                       "ConfigureStaticVnetIPAddress":  null,
+                                       "AlwaysRedeploy":  false,
+                                       "AlwaysRerunScripts":  false,
+                                       "MoveVmToCorrectSubnet":  false,
+                                       "AllowIpAddressChange":  false,
+                                       "LocalAdminCredential":  null,
+                                       "DomainJoinCredential":  null,
+                                       "VmCount":  0,
+                                       "CloudServiceName":  "trondcloudci",
+                                       "VnetName":  null,
+                                       "DataDiskSize":  0
+                                   }
+                },
+                {
+                    "VmName":  "projectnameVM02",
+                    "IpAddress":  null,
+                    "VmSettings":  null
+                }
+            ],
+    "PostDeploymentScripts":  null
 }

@@ -23,8 +23,9 @@ Function Assert-azdeAffinityGroup
     }
 
 
-
-    $ActualAffinityGroupName = $AGName.replace("projectname",($Project.ProjectName))
+    #case-insensitive replace
+    $ActualAffinityGroupName = [AzureDeploymentEngine.StringExtensions]::Replace($AGName,"projectname",$projectname,"OrdinalIgnoreCase")
+    
     $ActualAffinityGroupName = $ActualAffinityGroupName.Replace(" ","")
     Enable-AzdeAzureSubscription -SubscriptionId ($Project.Subscription.SubscriptionId)
 

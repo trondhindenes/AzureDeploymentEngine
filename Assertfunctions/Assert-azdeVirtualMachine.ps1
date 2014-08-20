@@ -43,7 +43,10 @@ Function Assert-azdeVirtualMachine
         {
             $vm.VmSettings.CloudServiceName = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceName" -SettingsType "CloudServiceSettings" -TargetObject "Project"
         }
-        $vm.VmSettings.CloudServiceName = $vm.VmSettings.CloudServiceName.replace("projectname",$ProjectName)
+
+        #Case-insensitive string replace
+        $vm.VmSettings.CloudServiceName = [AzureDeploymentEngine.StringExtensions]::Replace($vm.VmSettings.CloudServiceName,"projectname",$projectname,"OrdinalIgnoreCase")
+
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Deploying vm into cloud service $($vm.VmSettings.CloudServiceName)"
 
         if (!($vm.VmSettings.Subnet))
