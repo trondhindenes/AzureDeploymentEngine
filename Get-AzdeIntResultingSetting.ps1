@@ -5,9 +5,7 @@
         $SettingsType,
         $TargetObject,
         $ProjectName,
-        $vmname,
-        $SubscriptionId,
-        $deployment
+        $vmname
     )
 
     $ThisVerboseLevel = 3
@@ -18,32 +16,10 @@
     Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "TargetObject: $TargetObject"
     Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "ProjectName: $ProjectName"
     
-    $Setting = $deployment.$SettingsType.$settingsAttribute
+    $Setting = $project.$SettingsType.$settingsAttribute
     
-    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Deployment Level: $Setting"
+    Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Project Level: $Setting"
 
-
-    if (($TargetObject -ne "Deployment"))
-    {
-        $subscription = $deployment.Subscriptions | where {$_.SubscriptionId -eq $SubscriptionId}
-        $TestSetting = $subscription.$SettingsType.$settingsAttribute
-        if ($TestSetting) {
-            $Setting =$TestSetting
-            Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Subscription Level: $Setting"
-            }
-        
-    }
-
-    if (($TargetObject -ne "Subscription"))
-    {
-        $project = $subscription.Projects | where {$_.ProjectName -eq $ProjectName}
-        $TestSetting = $project.$SettingsType.$settingsAttribute
-        if ($TestSetting) {
-            $Setting =$TestSetting
-            Write-enhancedVerbose -MinimumVerboseLevel $ThisVerboseLevel -Message "Project Level: $Setting"
-            }
-        
-    }
 
     if ($TargetObject -ne "Project")
     {

@@ -29,7 +29,9 @@ namespace AzureDeploymentEngine
         public string VmSize { get; set; }
         public string Subnet { get; set; }
         public bool? JoinDomain { get; set; }
+        public bool? StartIfStopped { get; set; }
         public bool? WaitforVmDeployment { get; set; }
+        public bool? ConfigureStaticVnetIPAddress { get; set; }
         public bool? AlwaysRedeploy { get; set; }
         public bool? AlwaysRerunScripts { get; set; }
         public bool? MoveVmToCorrectSubnet { get; set; }
@@ -75,7 +77,6 @@ namespace AzureDeploymentEngine
         public List<String> VmNames { get; set; }
         public List<AzureDeploymentEngine.Vm> VMs { get; set; }
         //public List<System.Array> VMs { get; set; }
-        public AzureDeploymentEngine.Deployment Deployment { get; set; }
         public string CloudServiceName { get; set; }
         public bool? RebootOnCompletion { get; set; }
         public System.Collections.Hashtable Parameters { get; set; }
@@ -130,6 +131,7 @@ namespace AzureDeploymentEngine
 
     public class Project
     {
+        public Subscription Subscription { get; set; }
         public ProjectSetting ProjectSettings { get; set; }
         public CloudServiceSetting CloudServiceSettings { get; set; }
         public VmSetting VmSettings { get; set; }
@@ -142,23 +144,9 @@ namespace AzureDeploymentEngine
 
     public class Subscription
     {
-        public ProjectSetting ProjectSettings { get; set; }
-        public CloudServiceSetting CloudServiceSettings { get; set; }
-        public VmSetting VmSettings { get; set; }
         public string SubscriptionDisplayName { get; set; }
         public string SubscriptionId { get; set; }
-        public List<Project> Projects { get; set; }
-        
-
     }
 
-    public class Deployment
-    {
-        public ProjectSetting ProjectSettings { get; set; }
-        public CloudServiceSetting CloudServiceSettings { get; set; }
-        public VmSetting VmSettings { get; set; }
-        public string DeploymentName { get; set; }
-        public List<Subscription> Subscriptions { get; set; }
-        
-    }
+
 }

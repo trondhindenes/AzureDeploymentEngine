@@ -41,7 +41,7 @@ Function Import-AzdeDeploymentConfiguration
     $jsonstring = Get-content $Path -Raw
     
     $jsonconverter = New-Object AzureDeploymentEngine.JsonFunctions
-    $Deployment = $jsonconverter.ConvertToDeploymentFromJson($jsonstring)
+    $Deployment = $jsonconverter.ConvertToProjectFromJson($jsonstring)
     $Deployment
 }
 

@@ -1,8 +1,6 @@
 Function Assert-azdePostDeploymentScript
 {
     Param (
-        [AzureDeploymentEngine.Deployment]$Deployment,
-        [AzureDeploymentEngine.Subscription]$Subscription,
         [AzureDeploymentEngine.Project]$Project,
         $AffinityGroupName,
         $vms,
@@ -23,10 +21,26 @@ Function Assert-azdePostDeploymentScript
         $pdscriptvms = $pdscript.VmNames
         foreach ($pdscriptvm in $pdscriptvms)
         {
-            #If the VMs were already existing, check if the script is set to always rerun    
-            $vmrealname = $pdscriptvm.replace("projectname",$project.ProjectName)
+            #If the VMs were already existing, check if the script is set to always rerun 
             
-            $vm = $Project.Vms | where {($_.VmName.replace("projectname",$project.ProjectName)) -eq $vmrealname}
+            #Case-insensitive string replace
+            $vmrealname = [AzureDeploymentEngine.StringExtensions]::Replace($pdscriptvm,"projectname",$projectname,"OrdinalIgnoreCase")
+            
+            $vm = $null
+            foreach ($LookupVm in $project.vms)
+            {
+                $LookupVmName = $LookupVm.VmName
+                $RealLookupVmName = [AzureDeploymentEngine.StringExtensions]::Replace($pdscriptvm,"projectname",$projectname,"OrdinalIgnoreCase")
+                if ($RealLookupVmName -eq $vmrealname)
+                {
+                    $vm = $LookupVm
+                }
+
+            }
+
+            #Replaced with the code above for case-insensitivity
+            #$vm = $Project.Vms | where {($_.VmName.replace("projectname",$project.ProjectName)) -eq $vmrealname}
+            
             $jsonvm = $vm | ConvertTo-Json -Depth 10
             $vmobject = Import-AzdeVMConfiguration -string $jsonvm
             $vmobject.VmName = $vmrealname
@@ -41,23 +55,23 @@ Function Assert-azdePostDeploymentScript
             #If credentials arent set on the vm, get them from cascading project settings
             if (!($vmobject.VmSettings.DomainJoinCredential))
             {
-                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainJoinCredential" -SettingsType "VmSettings" -TargetObject "Project"
+                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainJoinCredential" -SettingsType "VmSettings" -TargetObject "Project"
             }
 
             if (!($vmobject.VmSettings.LocalAdminCredential))
             {
-                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "LocalAdminCredential" -SettingsType "VmSettings" -TargetObject "Project"
+                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "LocalAdminCredential" -SettingsType "VmSettings" -TargetObject "Project"
             }
 
             #If credentials are still empty, use the project's domain admin credentials
             if (!($vmobject.VmSettings.DomainJoinCredential))
             {
-                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+                $vmobject.VmSettings.DomainJoinCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
             }
 
             if (!($vmobject.VmSettings.LocalAdminCredential))
             {
-                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
+                $vmobject.VmSettings.LocalAdminCredential = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "DomainAdminCredential" -SettingsType "ProjectSettings" -TargetObject "Project"
             }
 
 
@@ -65,7 +79,7 @@ Function Assert-azdePostDeploymentScript
             #If this setting isnt set (not true, not false), look in cascading settings
             if ($scriptReRunsetting -eq $null)
             {
-                $scriptReRunsetting = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AlwaysRerunScripts" -SettingsType "VmSettings" -TargetObject "Project"
+                $scriptReRunsetting = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AlwaysRerunScripts" -SettingsType "VmSettings" -TargetObject "Project"
                 if ($scriptReRunsetting -eq $null)
                 {
                     $scriptReRunsetting = $false
@@ -105,7 +119,7 @@ Function Assert-azdePostDeploymentScript
                 $thispds.CloudServiceName = $Deployedvm.ServiceName
                 
                 #Get the domain name for credentials
-                $Addomainname = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "AdDomainName" -SettingsType "ProjectSettings" -TargetObject "Project"
+                $Addomainname = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "AdDomainName" -SettingsType "ProjectSettings" -TargetObject "Project"
 
                 Invoke-PostDeploymentScript -PostDeploymentScript $thispds -storageaccount $storageaccount -artifactpath "$ArtifactPath\$($Project.ProjectName)\scripts" -adDomainName $Addomainname
             }

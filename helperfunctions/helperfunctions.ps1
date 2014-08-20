@@ -27,3 +27,8 @@ function Write-enhancedVerbose
     }
 
 }
+
+function get-SpecialFolder { 
+  param([System.Environment+SpecialFolder]$Alias) 
+  [Environment]::GetFolderPath([System.Environment+SpecialFolder]$alias) 
+}

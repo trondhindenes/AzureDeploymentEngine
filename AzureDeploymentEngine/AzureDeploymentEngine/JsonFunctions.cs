@@ -9,15 +9,15 @@ namespace AzureDeploymentEngine
 {
     public class JsonFunctions
     {
-        public AzureDeploymentEngine.Deployment ConvertToDeploymentFromJson(string JsonString)
+        public AzureDeploymentEngine.Project ConvertToProjectFromJson(string JsonString)
         {
             //JsonSerializerSettings jsonSettings = new JsonSerializerSettings();
             //jsonSettings.NullValueHandling = NullValueHandling.Ignore;
-            AzureDeploymentEngine.Deployment ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Deployment>(JsonString);
+            AzureDeploymentEngine.Project ConvertedObject = JsonConvert.DeserializeObject<AzureDeploymentEngine.Project>(JsonString);
                 return ConvertedObject;
         }
 
-        public string ConvertFromDeploymentToJson(AzureDeploymentEngine.Deployment DeploymentObj)
+        public string ConvertFromDeploymentToJson(AzureDeploymentEngine.Project DeploymentObj)
         {
             //JsonSerializerSettings jsonSettings = new JsonSerializerSettings();
             //jsonSettings.NullValueHandling = NullValueHandling.Ignore;
