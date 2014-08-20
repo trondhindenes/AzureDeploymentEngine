@@ -11,7 +11,7 @@ Function Invoke-PostDeploymentScript
     foreach ($vm in $PostDeploymentScript.vms)
     {
         #Main loop for script
-        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Staring post-deployment script for vm $($vm.VmName)"
+        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Starting post-deployment script for vm $($vm.VmName)"
         
         if ($PostDeploymentScript.CloudServiceName)
         {
@@ -52,6 +52,7 @@ Function Invoke-PostDeploymentScript
         }
 
         $Credobject = Get-AzdeCredObject -credential $VMWinRmCreds
+        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "POSTINSTALLSCRIPT: Using credential username $($credobject.username) for connection"
 
         #Attempt connection
         $retries = 0
@@ -63,7 +64,16 @@ Function Invoke-PostDeploymentScript
             }
             $testsession = Invoke-Command -ConnectionUri $winRMUri.AbsoluteUri -Credential $Credobject -SessionOption $Pssessionoption -ScriptBlock {
             $env:computername
-                } -ErrorAction 0
+                } -ErrorAction 0 -ErrorVariable TestSessionError
+
+            if ($testsessionerror)
+            {
+                if (($testsessionerror[0].FullyQualifiedErrorId.ToString()) -eq "AccessDenied,PSSessionOpenFailed")
+                {
+                    Write-error "Account got access denied. Check your credentials settings!"
+                }
+            }
+            
             $retries ++
         }
         until (($retries -gt 10) -or ($testsession))
