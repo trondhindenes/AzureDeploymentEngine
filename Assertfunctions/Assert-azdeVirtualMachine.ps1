@@ -21,7 +21,8 @@ Function Assert-azdeVirtualMachine
         $vmjsonstring = $originalvm | convertto-json -Depth 10
         $vm = Import-AzdeVMConfiguration -string $vmjsonstring
 
-        $vm.VmName = $vm.VmName.replace("projectname",$ProjectName)
+        #Perform case-insensitive replace of ProjectName to the actual projectname
+        $vm.VmName = [AzureDeploymentEngine.StringExtensions]::Replace($vm.VmName,"projectname",$projectname,"OrdinalIgnoreCase")
         $vmname = $vm.VmName
        
        #If VM doesnt come with vmsettings, add a settings object
