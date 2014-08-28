@@ -1,4 +1,5 @@
 $thismodulepath = $psscriptroot
+$verboselevel = 2
 
 add-type -Path "$psscriptroot\Dlls\newtonsoft.json.dll"
 add-type -Path "$psscriptroot\Dlls\AzureDeploymentEngine.dll"
@@ -6,7 +7,7 @@ gci $psscriptroot\Nikolic-AzureHelpers\*.ps1 | % { . $_.FullName }
 gci $psscriptroot\Credentials\*.ps1 | % { . $_.FullName }
 gci $psscriptroot\PostDeploymentScripts\*.ps1 | % { . $_.FullName }
 gci $psscriptroot\ObjectFunctions\*.ps1 | % { . $_.FullName }
-gci $psscriptroot\Invoke-AzdeEnvironment.ps1 | % { . $_.FullName }
+gci $psscriptroot\Invoke-Azdeproject.ps1 | % { . $_.FullName }
 gci $psscriptroot\Get-AzdeIntResultingSetting.ps1 | % { . $_.FullName }
 gci $psscriptroot\Enable-AzdeAzureSubscription.ps1 | % { . $_.FullName }
 gci $psscriptroot\iaas\*.ps1 | % { . $_.FullName }

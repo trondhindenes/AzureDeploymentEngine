@@ -4,10 +4,21 @@ $modulefolderpath = $moduleFilePath | split-path
 
 
 function Invoke-AzdeProject {
+     [CmdletBinding()]
     Param (
+        
+        # The project object you want to invoke (see import-azdeproject)
+        [Parameter(Mandatory=$true)]
         [AzureDeploymentEngine.Project]$Project,
-        [switch]$SkipDomainController
+
+        # Skips creation/validation of domain controllers, even if you have one in your project
+        [switch]$SkipDomainController,
+
+        [ValidateRange(1,3)]
+        [int]$verboselevel = 2
     )
+
+    Set-variable $verboselevel -Value $verboselevel
 
     Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Command: Invoke-AzdeProject"
 

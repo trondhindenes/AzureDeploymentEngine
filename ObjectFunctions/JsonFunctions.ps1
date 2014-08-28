@@ -1,16 +1,16 @@
-﻿Function Save-AzdeDeploymentConfiguration {
+﻿Function Save-AzdeProject {
     Param (
         [Parameter(Mandatory=$true, 
                    ValueFromPipeline=$true)]
-        [AzureDeploymentEngine.Deployment]$deployment,
+        [AzureDeploymentEngine.project]$project,
         [string]$Path,
         [switch]$force
     )
 
     if (!($Path))
     {
-        $SavePath = Join-Path -Path $artifactpath -ChildPath "$($deployment.Deploymentname)"
-        $savepath = Join-Path -Path $SavePath -ChildPath "$($deployment.Deploymentname).json"
+        $SavePath = Join-Path -Path $artifactpath -ChildPath "$($project.ProjectName)"
+        $savepath = Join-Path -Path $SavePath -ChildPath "$($project.ProjectName).json"
          
     }
     Else
@@ -35,7 +35,7 @@
 }
 
 
-Function Import-AzdeDeploymentConfiguration
+Function import-AzdeProject
 {
     Param ($Path)
     $jsonstring = Get-content $Path -Raw

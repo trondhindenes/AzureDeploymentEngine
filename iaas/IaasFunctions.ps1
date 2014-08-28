@@ -142,7 +142,30 @@ function Invoke-AzDeVirtualMachine
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Creating new cloud service $cloudservice"
         New-AzureService -AffinityGroup $affinityGroupName -ServiceName $cloudserviceName | out-null
     }
-
+    Else
+    {
+        Write-enhancedVerbose -MinimumVerboseLevel 3 -Message "checking that cloud service $cloudservice is unlocked"
+        $cloudservicelockCounter = 0
+        Do
+        {
+            if ($cloudservicelockCounter -gt 0)
+            {
+                Start-Sleep -Seconds 10
+            }
+            if ($cloudservicelockCounter -eq 1)
+            {
+                Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Waiting for cloud service $cloudservice to become unlocked"
+            }
+            if ($cloudservicelockCounter -gt 60)
+            {
+                throw "Timed out waiting for cloud service $cloudservice to become unlocked"
+            }
+            $cslockstatus = Get-AzureDeployment -ServiceName $cloudserviceName -Verbose:$false
+            $cloudservicelockCounter ++
+        }
+        until ($cslockstatus.Locked -eq $false)
+        
+    }
     #csvms is an array of vms going to the same cs. These will have to be done one by one
    
     #Test if the VM exists
@@ -181,8 +204,14 @@ function Invoke-AzDeVirtualMachine
     {
         #Create the VM
         $image = Get-AzureVMImage -verbose:$false| where {$_.ImageFamily -eq $vm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
-        if (!$image){throw "Could not find the image specified ( $($vm.VmSettings.VmImage) )"}
-        $azurevm = New-AzureVMConfig -Name $vm.VmName -InstanceSize "Small" -Image $image.imagename
+        
+        #If that didnt work, try using the label. Maybe the full name was specified.
+        if (!$image)
+        {
+            Get-AzureVMImage -verbose:$false| where {$_.Label -eq $vm.VmSettings.VmImage}
+        }
+        if (!$image){throw "Could not find the image specified ( $($vm.VmSettings.VmImage) ). Specify a valid image (either ImageFamily or Label from get-azurevmimage)"}
+        $azurevm = New-AzureVMConfig -Name $vm.VmName -InstanceSize $vm.VmSettings.VMSize -Image $image.imagename
         if ($vm.VmSettings.JoinDomain -eq $true)
         {
             #TODO: This code should be moved out of here:
@@ -206,15 +235,33 @@ function Invoke-AzDeVirtualMachine
         if ($vm.VmSettings.DataDiskSize -gt 0)
         {
             $datadisksizeInGb = ($vm.VmSettings.DataDiskSize) # / 1GB
-            $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisksizeInGb -DiskLabel 'DataDrive' -LUN 0 | out-null
+            $azurevm |Add-AzureDataDisk -CreateNew -DiskSizeInGB $datadisksizeInGb -DiskLabel 'DataDrive' -LUN 0 -ErrorVariable datadiskerror| out-null
+        }
+
+        if ($datadiskerror)
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Couldn't add the data disk to vm $($vm.VmName): $datadiskerror. Skipping this VM."
+            Write-error "Couldn't add the data disk to vm $($vm.VmName): $datadiskerror. Skipping this VM"
+            $datadiskerror = $null
+            return
         }
 
         if ($vm.VmSettings.Subnet)
         {
             $azurevm | Set-AzureSubnet -SubnetNames $vm.vmsettings.Subnet | out-null
         }
-        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($vm.VmName)"
-        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName ($vm.VmSettings.VnetName) -WaitForBoot -Verbose:$false | out-null
+        $nowtime = get-date
+
+        if (($vm.VmSettings.WaitforVmDeployment) -eq $false)
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($vm.VmName) - started $nowtime"
+        }
+        Else
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($vm.VmName) - started $nowtime - will wait for the vm to be deployed"
+        }
+        
+        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName ($vm.VmSettings.VnetName) -WaitForBoot:$vm.VmSettings.WaitforVmDeployment -Verbose:$false -WarningAction SilentlyContinue | out-null
         
         
         $ReturnObjectVM = get-azurevm -Verbose:$false -ServiceName $vm.vmsettings.cloudservicename -Name $vm.VmName

@@ -80,17 +80,18 @@ Function Assert-azdeVirtualMachine
         }
 
 
-
         Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Setting vmsize $($vm.VmSettings.VMSize)"
 
+        
         $vm.VmSettings.VnetName = $networkname
         
-        if (!($vm.VmSettings.WaitforVmDeployment))
+        
+        if (($vm.VmSettings.WaitforVmDeployment) -eq $null)
         {
             $vm.VmSettings.WaitforVmDeployment = Get-AzdeIntResultingSetting -ProjectName ($Project.ProjectName) -settingsAttribute "WaitforVmDeployment" -SettingsType "VmSettings" -TargetObject "Project"
         }
         #If nothing is specified, we will wait for VM deployment
-        if (!($vm.VmSettings.WaitforVmDeployment))
+        if (($vm.VmSettings.WaitforVmDeployment) -eq $null)
         {
             $vm.VmSettings.WaitforVmDeployment = $true
         }

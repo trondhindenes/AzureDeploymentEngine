@@ -60,7 +60,7 @@ Function Assert-AzdeDomainController
     $domaincontroller.VmSettings.VmCount = 1
     $domaincontroller.VmSettings.AlwaysRedeploy = $false
     $domaincontroller.VmSettings.VnetName = $Project.Network.NetworkName
-    $domaincontroller.VmSettings.DataDiskSize = 5GB
+    $domaincontroller.VmSettings.DataDiskSize = 5
     
     
 
