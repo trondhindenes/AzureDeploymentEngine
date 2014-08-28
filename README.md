@@ -1,25 +1,8 @@
 # Azure Deployment Engine #
 
-Azure Deployment Engine (or AZdE) is a PowerShell module for automating the deployment of complex, multi-VM systems in Microsoft Azure.
+Azure Deployment Engine (or AZdE) is a PowerShell module for automating the deployment of complex, multi-VM systems in Microsoft Azure in a flexible way.
 
-### What id does ###
-
-* Construct a deployment using PowerShell functions or by editing json
-* Import/Export to Json
-* Deploy one or multiple VMs
-* Auto-deployment of domain controller VM
-* Run post-deployment scripts on one or several VMs to perform app installs
-* Copy files between local computer and Azure VMs using blob storage
-
-### How to install ###
-* Download, unzip and stick it in one of your PowerShell module folders
-* The folder "AzureDeploymentEngine" inside the zip containing the Visual Studio project can be deleted, it's not required for using the module
-
-### How to use ###
-=======
-# Azure Deployment Engine #
-
-Azure Deployment Engine (or AZdE) is a PowerShell module for automating the deployment of complex, multi-VM systems in Microsoft Azure.
+It was written by Trond Hindenes, who shamelessly borrowed some code written by Aleksandar Nikolic (basically all the difficult things were written by Aleksandar).
 
 ### What it does ###
 
@@ -30,8 +13,6 @@ Azure Deployment Engine (or AZdE) is a PowerShell module for automating the depl
 * Run post-deployment scripts on one or several VMs to perform app installs
 * Copy files between local computer and Azure VMs using blob storage
 
-### What it doesn't do (yet) ###
+### More info
 
-* Verify your inputs. Which may lead to errors while running the script, for instance if you specified an invalid cloudservice name
-* Use paralellism. The script will deploy VMs, one at a time, and then run scripts also one at a time. 
-
+Head over to the wiki page at https://github.com/trondhindenes/AzureDeploymentEngine/wiki for tons of info and docs and stuff.
