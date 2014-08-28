@@ -168,13 +168,34 @@ function Invoke-AzDeVirtualMachine
     }
     #csvms is an array of vms going to the same cs. These will have to be done one by one
    
+    #Assume the vm does not already exist
+    $DoDeployVM = $true
+
     #Test if the VM exists
     $VMsCheck = Get-AzureVM -verbose:$false
     if ($vmsCheck | where {$_.Name -eq $vm.VmName})
     {
-        #VM exists
-        Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Found existing vm $($vm.VmName). Skipping."
         $VMCheck = $VMsCheck | where {$_.Name -eq $vm.VmName}
+        $DoDeployVM = $false
+        #VM exists in the right cloud service
+        if (($vm.VmSettings.AlwaysRedeploy -eq $true) -and ($VMCheck.ServiceName -eq $cloudserviceName))
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Found existing vm $($vm.VmName). Tearing down according to settings"
+            Remove-AzureVM -Name $vmcheck.Name -ServiceName $vmcheck.ServiceName -DeleteVHD -Verbose:$false
+            $DoDeployVM = $true
+        }
+        Elseif (($vm.VmSettings.AlwaysRedeploy -eq $true) -and ($VMCheck.ServiceName -ne $cloudserviceName))
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Found existing vm $($vm.VmName), but in the wrong cloud service. Skipping, although settings state alwaysredeploy"
+            Write-Warning "Found existing vm $($vm.VmName), but in the wrong cloud service. Skipping, although settings state alwaysredeploy"
+        }
+        Else
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Found existing vm $($vm.VmName). Skipping."
+        }
+        
+
+
         if ($VMCheck.ServiceName -ne $cloudserviceName)
         {
             #VM exists, but in different subnet
@@ -197,10 +218,13 @@ function Invoke-AzDeVirtualMachine
         }
         
         $vmcheck | Add-Member -MemberType NoteProperty -Name "AlreadyExistingVm" -Value $true -Force
-
-        return $VMCheck                               
+        if ($DoDeployVM -ne $true)
+        {
+            return $VMCheck
+        }
+        
     }
-    Else
+    if ($DoDeployVM -eq $true)
     {
         #Create the VM
         $image = Get-AzureVMImage -verbose:$false| where {$_.ImageFamily -eq $vm.VmSettings.VmImage} | Sort-Object PublishedDate | Select -First 1
