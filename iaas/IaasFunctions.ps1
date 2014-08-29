@@ -139,12 +139,12 @@ function Invoke-AzDeVirtualMachine
         
     if (!(Get-AzureService -ServiceName $cloudserviceName -ErrorAction 0 -verbose:$false))
     {
-        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Creating new cloud service $cloudservice"
+        Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Creating new cloud service $cloudserviceName"
         New-AzureService -AffinityGroup $affinityGroupName -ServiceName $cloudserviceName | out-null
     }
     Else
     {
-        Write-enhancedVerbose -MinimumVerboseLevel 3 -Message "checking that cloud service $cloudservice is unlocked"
+        Write-enhancedVerbose -MinimumVerboseLevel 3 -Message "checking that cloud service $cloudserviceName is unlocked"
         $cloudservicelockCounter = 0
         Do
         {
@@ -154,16 +154,16 @@ function Invoke-AzDeVirtualMachine
             }
             if ($cloudservicelockCounter -eq 1)
             {
-                Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Waiting for cloud service $cloudservice to become unlocked"
+                Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Waiting for cloud service $cloudserviceName to become unlocked"
             }
             if ($cloudservicelockCounter -gt 60)
             {
-                throw "Timed out waiting for cloud service $cloudservice to become unlocked"
+                throw "Timed out waiting for cloud service $cloudserviceName to become unlocked"
             }
-            $cslockstatus = Get-AzureDeployment -ServiceName $cloudserviceName -Verbose:$false
+            $cslockstatus = Get-AzureDeployment -ServiceName $cloudserviceName -Verbose:$false -ErrorAction SilentlyContinue
             $cloudservicelockCounter ++
         }
-        until ($cslockstatus.Locked -eq $false)
+        until (($cslockstatus.Locked -eq $false) -or ($cslockstatus -eq $null))
         
     }
     #csvms is an array of vms going to the same cs. These will have to be done one by one
@@ -285,7 +285,10 @@ function Invoke-AzDeVirtualMachine
             Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Deploying vm $($vm.VmName) - started $nowtime - will wait for the vm to be deployed"
         }
         
-        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName ($vm.VmSettings.VnetName) -WaitForBoot:$vm.VmSettings.WaitforVmDeployment -Verbose:$false -WarningAction SilentlyContinue | out-null
+        #Get the real vnet name in case "projectname" was used
+        #case-insensitive replace
+        $Actualnetworkname = [AzureDeploymentEngine.StringExtensions]::Replace($vm.VmSettings.VnetName,"projectname",$projectname,"OrdinalIgnoreCase")
+        $azurevm | New-AzureVM -ServiceName $vm.vmsettings.cloudservicename -VNetName $Actualnetworkname -WaitForBoot:$vm.VmSettings.WaitforVmDeployment -Verbose:$false -WarningAction SilentlyContinue | out-null
         
         
         $ReturnObjectVM = get-azurevm -Verbose:$false -ServiceName $vm.vmsettings.cloudservicename -Name $vm.VmName

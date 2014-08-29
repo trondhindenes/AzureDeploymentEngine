@@ -6,12 +6,13 @@ It was written by Trond Hindenes, who shamelessly borrowed some code written by 
 
 ### What it does ###
 
-* Construct a deployment using PowerShell functions or by editing json
+* Construct a deployment using PowerShell scripts or by editing json files (or a combination)
 * Import/Export to Json
 * Deploy one or multiple VMs
 * Auto-deployment of domain controller VM
 * Run post-deployment scripts on one or several VMs to perform app installs
 * Copy files between local computer and Azure VMs using blob storage
+* A gazillion settings ordered into logical (at least for me) classes.
 
 ### More info
 

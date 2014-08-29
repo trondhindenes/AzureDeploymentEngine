@@ -47,6 +47,10 @@ Function Assert-AzdeDomainController
         $DomainControllerName = $ProjectName + "DC"
     }
     
+    #Get the real network name
+    #case-insensitive replace
+    $Actualnetworkname = [AzureDeploymentEngine.StringExtensions]::Replace($Project.Network.NetworkName,"projectname",$projectname,"OrdinalIgnoreCase")
+
     #Case-insensitive string replace
     $DomainController.VmName = [AzureDeploymentEngine.StringExtensions]::Replace($DomainControllerName,"projectname",$projectname,"OrdinalIgnoreCase")
     $DomainController.VmName = $DomainController.VmName.Replace(" ","")
@@ -59,8 +63,9 @@ Function Assert-AzdeDomainController
     $domaincontroller.VmSettings.WaitforVmDeployment = $true
     $domaincontroller.VmSettings.VmCount = 1
     $domaincontroller.VmSettings.AlwaysRedeploy = $false
-    $domaincontroller.VmSettings.VnetName = $Project.Network.NetworkName
+    $domaincontroller.VmSettings.VnetName = $Actualnetworkname
     $domaincontroller.VmSettings.DataDiskSize = 5
+    $domaincontroller.VmSettings.VmSize = "Small"
     
     
 
