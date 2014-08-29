@@ -30,7 +30,7 @@
     }
 
     #Todo: Better logic for not overwriting files
-    $deployment | ConvertTo-Json -Depth 15 | Set-Content -Path $SavePath -Force
+    $project | ConvertTo-Json -Depth 15 | Set-Content -Path $SavePath -Force
     Write-enhancedVerbose -MinimumVerboseLevel 2 -Message "Writing deployment config to $savepath"
 }
 
