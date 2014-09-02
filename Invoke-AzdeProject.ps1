@@ -7,13 +7,14 @@ function Invoke-AzdeProject {
      [CmdletBinding()]
     Param (
         
-        # The project object you want to invoke (see import-azdeproject)
+        # The project object you want to invoke (see import-azdeproject).
         [Parameter(Mandatory=$true)]
         [AzureDeploymentEngine.Project]$Project,
 
-        # Skips creation/validation of domain controllers, even if you have one in your project
+        # Skips creation/validation of domain controllers, even if you have one in your project.
         [switch]$SkipDomainController,
-
+        
+        # How detailed verbosing you want the script to output, from 1 to 3 (3 = most detailed).
         [ValidateRange(1,3)]
         [int]$verboselevel = 2
     )

@@ -7,6 +7,9 @@ Function Assert-azdePostDeploymentScript
         $storageaccount
     )
 
+    #Get the projectname
+    $projectname = $project.ProjectName
+
     #Get the post deployment scripts
     $PDscripts = $Project.PostDeploymentScripts
     $pdscripts = $PDscripts | Sort-Object Order
@@ -88,8 +91,12 @@ Function Assert-azdePostDeploymentScript
 
             $DoRunScript = $false
 
-
-            if ($deployedvm.AlreadyExistingVm)
+            if (($deployedvm.AlreadyExistingVm) -and ($pdscript.AlwaysRerun -eq $true))
+            {
+                #If the postdeploymentscript alwaysrerun setting is true, always re-run the script even if the vm already existed.
+                $DoRunScript = $true  
+            }
+            Elseif ($deployedvm.AlreadyExistingVm)
             {
                 if ($scriptReRunsetting -eq $false)
                 {
