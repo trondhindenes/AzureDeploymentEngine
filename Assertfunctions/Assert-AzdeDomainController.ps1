@@ -76,7 +76,9 @@ Function Assert-AzdeDomainController
     {
         $CloudServiceName = $projectname
     }
-    $CloudServiceName = $CloudServiceName.replace("projectname",$ProjectName)
+
+    $Actualnetworkname = [AzureDeploymentEngine.StringExtensions]::Replace($Project.Network.NetworkName,"projectname",$projectname,"OrdinalIgnoreCase")
+    $CloudServiceName = [AzureDeploymentEngine.StringExtensions]::Replace($CloudServiceName,"projectname",$projectname,"OrdinalIgnoreCase")
     
     #$CloudServicePrefix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServicePrefix" -SettingsType "CloudServiceSettings" -TargetObject "Project"
     #$CloudServiceSuffix = Get-AzdeIntResultingSetting -deployment $Deployment -SubscriptionId ($Subscription.SubscriptionId) -ProjectName ($Project.ProjectName) -settingsAttribute "CloudServiceSuffix" -SettingsType "CloudServiceSettings" -TargetObject "Project"
@@ -138,7 +140,7 @@ Function Assert-AzdeDomainController
 
         #Set the network's DNS server to the ip address of the DC
         $dcvm = Get-AzureVM -Name $DomainController.VmName -ServiceName $DomainController.VmSettings.CloudServiceName
-        Add-AzureANDnsServerConfiguration -Name $azdeAdDomainName -IpAddress $dcvm.IpAddress -VNetName $networkname
+        Add-AzureANDnsServerConfiguration -Name $azdeAdDomainName -IpAddress $dcvm.IpAddress -VNetName $Actualnetworkname
     }
     
     Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "DC should be up and running at this point"
