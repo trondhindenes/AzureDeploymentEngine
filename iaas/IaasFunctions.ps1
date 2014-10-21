@@ -67,7 +67,8 @@ Function Invoke-StorageAccount
 
     if ((Get-AzureSubscription -Current).CurrentStorageAccountName -ne $StorageAccountName)
     {
-        Get-AzureSubscription -Current | Set-AzureSubscription -CurrentStorageAccountName $StorageAccountName
+        $currentsub = Get-AzureSubscription -Current
+        Set-AzureSubscription -SubscriptionName $currentsub.Name -CurrentStorageAccountName $StorageAccountName
     }
     $StorageAccountName
 	

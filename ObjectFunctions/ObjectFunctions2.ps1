@@ -37,7 +37,7 @@ Function new-AzdeSubscription {
         [Parameter(ParameterSetName='ByName')]
         [string]$SubscriptionId,
         [Parameter(ValueFromPipeline=$true,ParameterSetName='ByAzureSubscriptionObject')]
-        [Microsoft.WindowsAzure.Commands.Utilities.Common.WindowsAzureSubscription]$AzureSubscription
+        [Microsoft.WindowsAzure.Commands.Profile.Models.PSAzureSubscription]$AzureSubscription
     )
 
     $Subscription = New-Object AzureDeploymentEngine.Subscription
