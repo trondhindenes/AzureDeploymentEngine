@@ -31,4 +31,4 @@ $params = @{
             SafeModeAdministratorPassword = $password
         }
 
-         Install-ADDSForest @params
+         Install-ADDSForest @params -WarningAction SilentlyContinue
