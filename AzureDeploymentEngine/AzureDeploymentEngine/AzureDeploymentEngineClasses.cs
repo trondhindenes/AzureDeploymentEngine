@@ -123,6 +123,7 @@ namespace AzureDeploymentEngine
         public bool? SetDomainControllerForwarderAddress { get; set; }
         public string VmNamePrefix { get; set; }
         public string VmNameSuffix { get; set; }
+        public bool? DontUseAffinityGroup { get; set; }
         
         //not implemented:
         public bool? DontUseVirtualNetworks { get; set; }

@@ -49,12 +49,17 @@ Function Invoke-StorageAccount
             Set-variable -Name VerbosePreference -Scope local -Value "SilentlyContinue"
         }
 	$ExistingStorageAccount = Get-AzureStorageAccount -StorageAccountName $StorageAccountName -ErrorAction 0
-	if (!$ExistingStorageAccount)
+	if ((!$ExistingStorageAccount) -and ($AffinityGroupName -ne ""))
 	{
 		Write-Verbose "Creating Storage account $StorageAccountName"
 	    New-AzureStorageAccount -StorageAccountName $StorageAccountName  -AffinityGroup $AffinityGroupName | out-null
 	}
-	Else
+	Elseif ((!$ExistingStorageAccount) -and ($AffinityGroupName -eq ""))
+	{
+		Write-Verbose "Creating Storage account $StorageAccountName"
+	    New-AzureStorageAccount -StorageAccountName $StorageAccountName -Location $Project.Location | out-null
+	}
+	Elseif ($AffinityGroupName -ne "")
 	{
 		if (($ExistingStorageAccount.AffinityGroup) -ne $AffinityGroupName)
 		{
@@ -96,7 +101,15 @@ Function Invoke-network
     }
     Else
     {
-        Write-verbose "Creating network $networkname in Affinity Group $AffinityGroupName"
+        if ($AffinityGroup -ne "")
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Creating network $networkname in location $($project.Location)"
+        }
+        Else
+        {
+            Write-enhancedVerbose -MinimumVerboseLevel 1 -Message "Creating network $networkname in location $($project.Location)"
+        }
+        
         
         #Get the subnets
         $subnets = $network.Subnets

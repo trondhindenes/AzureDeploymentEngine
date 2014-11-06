@@ -44,7 +44,14 @@ function Invoke-AzdeProject {
 
 
     #Construct list of AGs, Storage Account(s),Networks, VMs, postdeploymentscripts to be created
-    $AffinityGroup = Assert-azdeAffinityGroup -Deployment $Deployment -subscription $subscription -project $project
+    if ($project.DontUseAffinityGroup -ne $true)
+    {
+        $AffinityGroup = Assert-azdeAffinityGroup -Deployment $Deployment -subscription $subscription -project $project
+    }
+    Else
+    {
+        $AffinityGroup = ""
+    }
 
     #Storage Account
     $StorageAccount = Assert-AzdeStorageAccount -Deployment $Deployment -subscription $subscription -project $project -AffinityGroupName $AffinityGroup
