@@ -25,6 +25,8 @@ Function Assert-azdeVirtualMachine
         $vm.VmName = [AzureDeploymentEngine.StringExtensions]::Replace($vm.VmName,"projectname",$projectname,"OrdinalIgnoreCase")
         $vmname = $vm.VmName
        
+       if (!$vmname) {write-error "VM name not specified";return}
+
        #If VM doesnt come with vmsettings, add a settings object
        if (!($vm.vmsettings))
        {
